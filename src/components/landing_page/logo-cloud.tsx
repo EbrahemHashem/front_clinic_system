@@ -12,7 +12,7 @@ const LogoCloud: React.FC = () => {
   ];
 
   return (
-    <section className="py-12 bg-slate-950 border-y border-slate-900/50">
+    <section id ="logo-cloud" className="py-12 bg-slate-950 border-y border-slate-900/50">
       <div className="container mx-auto px-6">
         <p className="text-center text-xs font-black uppercase tracking-[0.3em] text-slate-500 mb-10">
           Trusted by 500+ clinics worldwide
