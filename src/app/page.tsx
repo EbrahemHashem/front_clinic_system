@@ -5,6 +5,7 @@ import LogoCloud from "@/components/landing_page/logo-cloud";
 import PageShell from "@/components/landing_page/page-shell";
 import Pricing from "@/components/landing_page/pricing";
 
+
 export default function Home() {
   return (
     <PageShell>
@@ -18,6 +19,5 @@ export default function Home() {
       <FAQ />
       <Pricing />
     </PageShell>
-
   );
 }
