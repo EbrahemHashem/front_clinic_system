@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Loader2, AlertCircle, ArrowRight, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { API_CONFIG } from '@/lib/constants'; // Using your central config
+import { API_CONFIG } from '@/lib/constants';
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();
@@ -24,13 +24,12 @@ const RegisterForm: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    // Basic length validation
+
     if (formData.phone_number.length < 10) {
         setError("Please enter a valid phone number (at least 10 digits).");
         setIsLoading(false);
         return;
     }
-
 
     try {
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.REGISTER}`, {
@@ -39,14 +38,21 @@ const RegisterForm: React.FC = () => {
         body: JSON.stringify(formData),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Registration failed. Please try again.');
+        throw new Error(data.message || data.detail || 'Registration failed.');
       }
 
+      // SUCCESS LOGIC
       setSuccess(true);
-      // Give the user a moment to see the success message
-      setTimeout(() => router.push('/login'), 2000);
+      
+      // Save user email so VerifyForm can find it
+      localStorage.setItem('dentflow_user', JSON.stringify({ email: formData.email }));
+
+      // FIX: Move to verify instead of login
+      setTimeout(() => router.push('/verify'), 1500);
+
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -55,11 +61,10 @@ const RegisterForm: React.FC = () => {
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-  // This regex allows only numbers (0-9)
-  if (/^\d*$/.test(value)) {
-      setFormData({ ...formData, phone_number: value });
-  }
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+        setFormData({ ...formData, phone_number: value });
+    }
   };
 
   return (
@@ -72,15 +77,15 @@ const RegisterForm: React.FC = () => {
 
         {error && (
           <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <span>{error}</span>
+            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <span className="font-bold">{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm flex items-start gap-3">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Registration successful! Redirecting to login...</span>
+          <div className="mb-6 bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+            <Loader2 className="w-5 h-5 animate-spin mt-0.5" />
+            <span className="font-bold">Account created! Redirecting to OTP verification...</span>
           </div>
         )}
 
@@ -134,16 +139,16 @@ const RegisterForm: React.FC = () => {
           <div className="space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Phone Number</label>
             <div className="relative group">
-            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
-            <input
-                type="tel"
-                required
-                placeholder="0123456789"
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all cursor-text"
-                value={formData.phone_number}
-                onChange={handlePhoneChange} // Use the new handler here
-                maxLength={15} // Optional: limit length
-            />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
+              <input
+                  type="tel"
+                  required
+                  placeholder="0123456789"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all cursor-text"
+                  value={formData.phone_number}
+                  onChange={handlePhoneChange}
+                  maxLength={15}
+              />
             </div>
           </div>
 
@@ -167,10 +172,6 @@ const RegisterForm: React.FC = () => {
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
-          </div>
-
-          <div className="text-[10px] text-slate-500 px-2 leading-relaxed">
-            By clicking "Register Now", you agree to our <button type="button" className="text-orange-500 hover:underline cursor-pointer">Terms of Service</button> and <button type="button" className="text-orange-500 hover:underline cursor-pointer">Privacy Policy</button>.
           </div>
 
           <button
