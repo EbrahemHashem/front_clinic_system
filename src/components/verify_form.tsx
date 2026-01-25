@@ -15,19 +15,23 @@ const VerifyForm = () => {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Safely retrieve user email from storage
-    const user = localStorage.getItem('dentflow_user'); // Note: Make sure this key matches your login logic ('dentflow_auth' vs 'dentflow_user')
-    if (user) {
+    const data = localStorage.getItem('dentflow_user');
+    if (data) {
       try {
-        const parsed = JSON.parse(user);
-        // Handle if stored as raw user object or auth object
-        setEmail(parsed.email || parsed.user?.email || '');
+        const user = JSON.parse(data);
+        
+        // CHECK: If user is already verified, push them to setup immediately
+        if (user.isVerified) {
+          router.replace('/setup-clinic');
+          return;
+        }
+        
+        setEmail(user.email || '');
       } catch (e) {
         console.error("Error parsing user for verification");
       }
     } else {
-      // Optional: Redirect if no email is found, or allow manual entry
-      // router.push('/register');
+      router.push('/register');
     }
   }, [router]);
 
@@ -38,19 +42,14 @@ const VerifyForm = () => {
     setMessage(null);
 
     try {
-      // FIX: Use URLSearchParams to create the query string
       const params = new URLSearchParams({
         email: email,
         auth_code: authCode
       });
 
-      // FIX: Append params to URL and remove 'body'
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.VERIFY_CODE}?${params.toString()}`, {
         method: 'GET',
-        headers: { 
-          'Accept': 'application/json',
-          // 'Content-Type': 'application/json' is not needed for GET without body
-        }
+        headers: { 'Accept': 'application/json' }
       });
 
       const data = await response.json();
@@ -59,13 +58,17 @@ const VerifyForm = () => {
         throw new Error(data.message || 'Invalid verification code');
       }
 
+      // SUCCESS: Update localStorage to "lock" this stage
+      const currentUserData = JSON.parse(localStorage.getItem('dentflow_user') || '{}');
+      localStorage.setItem('dentflow_user', JSON.stringify({
+        ...currentUserData,
+        isVerified: true // This flag prevents coming back to this page
+      }));
+
       setMessage("Account activated successfully!");
       
-      // Update local storage to reflect verified status if needed
-      // const authData = localStorage.getItem('dentflow_auth');
-      // if (authData) { ...update verified status... }
-
-      setTimeout(() => router.push('/choose-plan'), 1500);
+      // Use replace instead of push so they can't click "back" to the form
+      setTimeout(() => router.replace('/setup-clinic'), 1500);
     } catch (err: any) {
       setError(err.message || "Verification failed");
     } finally {
@@ -77,20 +80,13 @@ const VerifyForm = () => {
     setResending(true);
     setError(null);
     setMessage(null);
-    
     try {
-      // Resend usually keeps query param logic or switches to POST body depending on backend
-      // Keeping it as query param per your previous pattern
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.RESEND_CODE}?email=${encodeURIComponent(email)}`;
-      
       const response = await fetch(url, { 
         method: 'POST',
         headers: { 'Accept': 'application/json' }
       });
-      
-      const result = await response.json();
-
-      if (!response.ok) throw new Error(result.message || 'Failed to resend code');
+      if (!response.ok) throw new Error('Failed to resend code');
       setMessage("New code sent successfully!");
     } catch (err: any) {
       setError(err.message);
@@ -131,7 +127,7 @@ const VerifyForm = () => {
         <button 
           type="submit" 
           disabled={isLoading || authCode.length < 4} 
-          className="w-full bg-orange-600 text-white font-black py-4 rounded-2xl hover:bg-orange-500 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-900/20"
+          className="w-full bg-orange-600 text-white font-black py-4 rounded-2xl hover:bg-orange-500 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           {isLoading ? <Loader2 className="animate-spin" /> : "Verify Account"}
         </button>
