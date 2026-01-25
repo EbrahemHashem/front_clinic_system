@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Building2, MapPin, Phone, ArrowRight, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { API_CONFIG } from '@/lib/constants';
+import { API_CONFIG } from '../lib/constants';
 
 const ClinicForm = () => {
   const router = useRouter();
