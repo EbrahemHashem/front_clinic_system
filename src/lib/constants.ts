@@ -5,7 +5,10 @@ export const API_CONFIG = {
   ENDPOINTS: {
     LOGIN: "core/login/",
     REGISTER: "core/register/",
-    FORGET_PASSWORD: "core/forget_password/"
+    FORGET_PASSWORD: "core/forget_password/",
+    VERIFY_CODE: "core/verify_code/",
+    RESEND_CODE: "core/resend_code/",
+    CREATE_CLINIC: "core/clinics/",
     // Add more endpoints here as your project grows
   }
 };
