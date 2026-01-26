@@ -8,7 +8,8 @@ export const API_CONFIG = {
     FORGET_PASSWORD: "core/forget_password/",
     VERIFY_CODE: "core/verify_code/",
     RESEND_CODE: "core/resend_code/",
-    CREATE_CLINIC: "clinics/",
+    CLINIC: "clinics/", // add , retrieve , update 
+    SUBSCRIPTION: "subscription/owner/" // two apis one for add subscription and one for retrieve subscriptions
     // Add more endpoints here as your project grows
   }
 };
