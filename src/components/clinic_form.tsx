@@ -38,7 +38,7 @@ const ClinicForm = () => {
       const { access_token } = JSON.parse(authData);
 
       // 2. Send the request with the Token
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CREATE_CLINIC}`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CLINIC}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
