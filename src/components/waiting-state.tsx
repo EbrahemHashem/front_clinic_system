@@ -19,21 +19,40 @@ const WaitingState = () => {
       const authData = JSON.parse(localStorage.getItem('dentflow_auth') || '{}');
       if (!authData.access_token) return;
 
-      const response = await fetch(`${API_CONFIG.BASE_URL}/users/me/`, {
+      // UPDATED: Changed endpoint to /clinics/ based on your screenshot
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CLINIC}`, {
         headers: { 'Authorization': `Bearer ${authData.access_token}` }
       });
+
+      if (!response.ok) {
+        console.error("Failed to fetch clinic status");
+        return;
+      }
+
       const data = await response.json();
 
-      // Adjust 'is_active' or 'subscription_status' based on your real API key
-      if (data.subscription?.is_active || data.is_approved) {
+      // Handle case where API might return an array of clinics or a single object
+      // Based on your JSON input, we treat 'data' as the clinic object
+      // But we add a safety check just in case the endpoint returns a list [ {clinic} ]
+      const clinicData = Array.isArray(data) ? data[0] : data;
+
+      // UPDATED LOGIC:
+      // 1. clinicData?.subscription checks if subscription is not null/undefined
+      // 2. .is_active === true checks the status
+      // If subscription is null, this entire condition is false, so it stays on this page.
+      if (clinicData?.subscription?.is_active === true) {
         router.push('/dashboard');
       }
+      
     } catch (err) {
       console.error("Polling error", err);
     }
   };
 
   useEffect(() => {
+    // Run immediately on mount
+    checkStatus();
+
     const interval = setInterval(checkStatus, 20000); // Auto-check every 20s
     return () => clearInterval(interval);
   }, []);
