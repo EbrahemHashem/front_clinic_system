@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Check, Loader2, AlertCircle, Users, UserRound, Contact2 } from 'lucide-react';
+import { Check, Loader2, AlertCircle, Users, UserRound, Contact2, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { API_CONFIG } from '../lib/constants';
 
@@ -34,7 +34,6 @@ const PlanSelection = () => {
         if (!response.ok) throw new Error('Failed to load subscription plans');
         const data = await response.json();
         
-        // Sort plans by price so Free Trial appears first
         const sortedPlans = data.sort((a: any, b: any) => parseFloat(a.price_monthly) - parseFloat(b.price_monthly));
         setAvailablePlans(sortedPlans);
       } catch (err: any) {
@@ -52,12 +51,18 @@ const PlanSelection = () => {
     setError(null);
 
     try {
-      const authData = localStorage.getItem('dentflow_auth');
-      const { access_token, user } = JSON.parse(authData || '{}');
-      const clinicId = user?.clinic?.id || user?.clinic_id;
+      const authString = localStorage.getItem('dentflow_auth');
+      if (!authString) throw new Error("Authentication data not found. Please login again.");
+      
+      const authData = JSON.parse(authString);
+      const access_token = authData.access_token;
+      
+      // Extract clinic_id from the user object or the root of authData
+      const clinicId = authData.user?.clinic?.id || authData.clinic?.id;
 
-      if (!clinicId) throw new Error("Clinic ID not found. Please complete clinic setup.");
+      if (!clinicId) throw new Error("Clinic ID not found. Please complete clinic setup first.");
 
+      // THE REQUEST YOU REQUESTED
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SUBSCRIPTION}`, {
         method: 'POST',
         headers: {
@@ -67,12 +72,17 @@ const PlanSelection = () => {
         body: JSON.stringify({
           clinic_id: clinicId,
           subscription_plan_id: planId,
-          amount: parseFloat(amount)
+          amount: parseFloat(amount) // Ensures it is a number like 0 or 500.00
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to activate plan');
+      const responseData = await response.json();
 
+      if (!response.ok) {
+        throw new Error(responseData.error || responseData.message || 'Failed to activate plan');
+      }
+
+      // Success: Redirect to dashboard
       window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err.message);
@@ -91,22 +101,29 @@ const PlanSelection = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4">
-      {/* Pricing Toggle */}
+      {/* Error Display */}
+      {error && (
+        <div className="mb-8 max-w-2xl mx-auto bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl flex items-center gap-3">
+          <AlertCircle className="shrink-0" />
+          <p className="font-bold text-sm">{error}</p>
+        </div>
+      )}
+
       <div className="flex flex-col items-center mb-16">
-        <h2 className="text-4xl font-black text-white mb-6 text-center">Choose the right plan for your clinic</h2>
+        <h2 className="text-4xl font-black text-white mb-6 text-center tracking-tight">Select Your Plan</h2>
         <div className="bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex items-center gap-2">
           <button
             onClick={() => setIsYearly(false)}
-            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${!isYearly ? 'bg-white text-black' : 'text-slate-500'}`}
+            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${!isYearly ? 'bg-white text-black' : 'text-slate-500 hover:text-slate-300'}`}
           >
             Monthly
           </button>
           <button
             onClick={() => setIsYearly(true)}
-            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${isYearly ? 'bg-white text-black' : 'text-slate-500'}`}
+            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${isYearly ? 'bg-white text-black' : 'text-slate-500 hover:text-slate-300'}`}
           >
             Yearly
-            <span className="text-[10px] bg-green-500/20 text-green-500 px-2 py-0.5 rounded-md">Save 20%</span>
+            <span className="text-[10px] bg-green-500/20 text-green-500 px-2 py-0.5 rounded-md uppercase">Save 20%</span>
           </button>
         </div>
       </div>
@@ -123,7 +140,7 @@ const PlanSelection = () => {
               className={`relative p-8 rounded-[2.5rem] border transition-all duration-500 ${
                 isAdvanced 
                   ? 'border-orange-500 bg-orange-500/[0.03] shadow-[0_0_50px_rgba(234,88,12,0.1)] scale-105 z-10' 
-                  : 'border-slate-800 bg-slate-900/40'
+                  : 'border-slate-800 bg-slate-900/40 hover:border-slate-700'
               }`}
             >
               {isAdvanced && (
@@ -133,38 +150,40 @@ const PlanSelection = () => {
               )}
               
               <h3 className="text-2xl font-black text-white mb-2">{plan.name}</h3>
-              <p className="text-slate-500 text-sm mb-8 leading-relaxed">{plan.description}</p>
+              <p className="text-slate-400 text-sm mb-8 leading-relaxed line-clamp-2">{plan.description}</p>
               
               <div className="mb-8">
                 <div className="flex items-baseline gap-1">
                   <span className="text-5xl font-black text-white">${parseInt(price)}</span>
-                  <span className="text-slate-500 font-bold">{isYearly ? '/yr' : '/mo'}</span>
+                  <span className="text-slate-500 font-bold">
+                    {isFree ? '/14 days' : (isYearly ? '/yr' : '/mo')}
+                  </span>
                 </div>
-                {isYearly && !isFree && (
+                {isFree ? (
+                  <p className="text-blue-400 text-xs font-bold mt-2 flex items-center gap-1">
+                    <Clock size={12} /> Limited time full access
+                  </p>
+                ) : isYearly && (
                   <p className="text-orange-500 text-xs font-bold mt-2">Billed annually (${plan.price_monthly}/mo)</p>
                 )}
               </div>
 
-              {/* Plan Limits - Detailed View */}
               <div className="space-y-4 mb-10 p-5 bg-slate-950/50 rounded-3xl border border-slate-800/50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
-                    <UserRound size={18} className="text-orange-500" />
-                    Doctors
+                    <UserRound size={18} className="text-orange-500" /> Doctors
                   </div>
                   <span className="text-white font-black">{plan.max_doctors}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
-                    <Users size={18} className="text-orange-500" />
-                    Assistants
+                    <Users size={18} className="text-orange-500" /> Assistants
                   </div>
                   <span className="text-white font-black">{plan.max_assistants}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
-                    <Contact2 size={18} className="text-orange-500" />
-                    Patients
+                    <Contact2 size={18} className="text-orange-500" /> Patients
                   </div>
                   <span className="text-white font-black">{plan.max_patients}</span>
                 </div>
@@ -177,12 +196,12 @@ const PlanSelection = () => {
                   isAdvanced 
                     ? 'bg-orange-600 text-white hover:bg-orange-500 hover:scale-[1.02]' 
                     : 'bg-white text-black hover:bg-slate-200'
-                } disabled:opacity-50`}
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {isSubmitting === plan.id ? (
                   <Loader2 className="animate-spin" />
                 ) : (
-                  isFree ? "Start Free Trial" : "Activate Plan"
+                  isFree ? "Start 14-Day Free Trial" : "Activate Plan"
                 )}
               </button>
             </div>
