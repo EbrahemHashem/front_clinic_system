@@ -28,34 +28,35 @@ const LoginForm: React.FC = () => {
         }
       );
 
-      const data = await response.json();
+    // Inside LoginForm.tsx -> handleSubmit function
+    const data = await response.json();
 
-      if (!response.ok) {
-        // VALIDATION: Check the "error" key for the activation message
-        if (data.error === "Your account is not active. Please activate your account to continue.") {
-          
-          // 1. Save email so VerifyForm can use it
-          localStorage.setItem("dentflow_user", JSON.stringify({ email: formData.email }));
-          
-          // 2. Optional: Trigger auto-resend of OTP
-          try {
-             await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.RESEND_CODE}?email=${encodeURIComponent(formData.email)}`, { 
-               method: 'POST' 
-             });
-          } catch (resendErr) {
-             console.error("Auto-resend failed");
-          }
-
-          setError("Account not active. Redirecting to verification...");
-          
-          // 3. Redirect to verify page after a short delay
-          setTimeout(() => router.push("/verify"), 1500);
-          return;
-        }
-
-        // Handle other general errors
-        throw new Error(data.message || data.error || data.detail || "Invalid email or password");
+    if (!response.ok) {
+      // Check for the specific "not active" error you mentioned
+      if (data.error === "Your account is not active. Please activate your account to continue.") {
+        localStorage.setItem("dentflow_user", JSON.stringify({ email: formData.email }));
+        setError("Account not active. Redirecting to verification...");
+        setTimeout(() => router.push("/verify"), 1500);
+        return;
       }
+      throw new Error(data.message || data.error || "Login failed");
+    }
+
+    // SAVE ACCESS TOKEN HERE
+    // Storing the full object: { user: {...}, access_token: "..." }
+    localStorage.setItem("dentflow_auth", JSON.stringify(data));
+
+    setSuccess(true);
+
+    setTimeout(() => {
+      const user = data.user;
+      // If owner has no clinic, go to setup. Otherwise, dashboard.
+      if (user.role === "owner" && !user.clinic && !data.clinic) {
+        window.location.href = "/setup-clinic";
+      } else {
+        window.location.href = "/dashboard";
+      }
+    }, 1000);
 
       // LOGIN SUCCESS LOGIC
       localStorage.setItem("dentflow_auth", JSON.stringify(data));
