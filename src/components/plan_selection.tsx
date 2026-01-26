@@ -1,119 +1,193 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, Loader2, AlertCircle, Users, UserRound, Contact2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { API_CONFIG } from '../lib/constants';
 
 const PlanSelection = () => {
   const router = useRouter();
   const [isYearly, setIsYearly] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [availablePlans, setAvailablePlans] = useState<any[]>([]);
 
-  const plans = [
-    {
-      name: 'Free Trial',
-      monthlyPrice: '$0',
-      yearlyPrice: '$0',
-      period: isYearly ? '/14 days' : '/14 days',
-      features: ['Full access to all features', 'No credit card required', 'Instant setup', 'Standard support'],
-      highlight: false,
-      buttonText: 'Start Free Trial'
-    },
-    {
-      name: 'Basic',
-      monthlyPrice: '$49',
-      yearlyPrice: '$470',
-      period: isYearly ? '/ year' : '/ month',
-      features: ['Up to 5 staff members', 'Patient records management', 'Appointment scheduling', 'Basic billing & invoicing'],
-      highlight: false,
-      buttonText: 'Choose Basic'
-    },
-    {
-      name: 'Advanced',
-      monthlyPrice: '$99',
-      yearlyPrice: '$950',
-      period: isYearly ? '/ year' : '/ month',
-      features: ['Unlimited staff members', 'All features in Basic', 'Advanced reporting', 'Inventory management', 'Priority support'],
-      highlight: true,
-      buttonText: 'Choose Advanced'
-    },
-  ];
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const authData = localStorage.getItem('dentflow_auth');
+        if (!authData) {
+          router.push('/login');
+          return;
+        }
+        const { access_token } = JSON.parse(authData);
+
+        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SUBSCRIPTION}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to load subscription plans');
+        const data = await response.json();
+        
+        // Sort plans by price so Free Trial appears first
+        const sortedPlans = data.sort((a: any, b: any) => parseFloat(a.price_monthly) - parseFloat(b.price_monthly));
+        setAvailablePlans(sortedPlans);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, [router]);
+
+  const handleSelectPlan = async (planId: string, amount: string) => {
+    setIsSubmitting(planId);
+    setError(null);
+
+    try {
+      const authData = localStorage.getItem('dentflow_auth');
+      const { access_token, user } = JSON.parse(authData || '{}');
+      const clinicId = user?.clinic?.id || user?.clinic_id;
+
+      if (!clinicId) throw new Error("Clinic ID not found. Please complete clinic setup.");
+
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SUBSCRIPTION}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${access_token}`
+        },
+        body: JSON.stringify({
+          clinic_id: clinicId,
+          subscription_plan_id: planId,
+          amount: parseFloat(amount)
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to activate plan');
+
+      window.location.href = "/dashboard";
+    } catch (err: any) {
+      setError(err.message);
+      setIsSubmitting(null);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="w-10 h-10 animate-spin text-orange-500 mb-4" />
+        <p className="text-slate-400 font-bold">Fetching latest plans...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full">
-      {/* Pricing Toggle - Matches your photo */}
-      <div className="flex justify-center items-center mb-16">
+    <div className="w-full max-w-7xl mx-auto px-4">
+      {/* Pricing Toggle */}
+      <div className="flex flex-col items-center mb-16">
+        <h2 className="text-4xl font-black text-white mb-6 text-center">Choose the right plan for your clinic</h2>
         <div className="bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex items-center gap-2">
           <button
             onClick={() => setIsYearly(false)}
-            className={`px-6 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${!isYearly ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${!isYearly ? 'bg-white text-black' : 'text-slate-500'}`}
           >
             Monthly
           </button>
           <button
             onClick={() => setIsYearly(true)}
-            className={`px-6 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${isYearly ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${isYearly ? 'bg-white text-black' : 'text-slate-500'}`}
           >
             Yearly
-            <span className="text-[10px] bg-orange-600/20 text-orange-500 px-2 py-0.5 rounded-md">Save 20%</span>
+            <span className="text-[10px] bg-green-500/20 text-green-500 px-2 py-0.5 rounded-md">Save 20%</span>
           </button>
         </div>
       </div>
 
-      {/* Plans Grid */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        {plans.map((plan, i) => (
-          <div 
-            key={i} 
-            className={`relative p-8 rounded-[2.5rem] border transition-all duration-300 ${
-              plan.highlight 
-                ? 'border-orange-600 bg-orange-600/5 shadow-[0_0_40px_rgba(234,88,12,0.1)] scale-105 z-10' 
-                : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
-            } flex flex-col`}
-          >
-            {plan.highlight && (
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-600 text-white text-[10px] font-black uppercase px-4 py-1 rounded-full tracking-widest">
-                Most Popular
-              </span>
-            )}
-            
-            <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
-            <p className="text-slate-500 text-xs mb-6">For growing clinics that need more power.</p>
-            
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className="text-4xl font-black text-white">
-                {isYearly ? plan.yearlyPrice : plan.monthlyPrice}
-              </span>
-              <span className="text-slate-500 text-sm font-medium">{plan.period}</span>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        {availablePlans.map((plan) => {
+          const isAdvanced = plan.name.toLowerCase().includes('advanced');
+          const price = isYearly ? plan.price_yearly : plan.price_monthly;
+          const isFree = parseFloat(price) === 0;
 
-            {isYearly && plan.monthlyPrice !== '$0' && (
-              <div className="text-orange-500 text-[10px] font-bold mb-6">
-                or {plan.monthlyPrice} / month
-              </div>
-            )}
-            {!isYearly && <div className="mb-6 h-[15px]"></div>}
-
-            <ul className="space-y-4 mb-8 flex-grow">
-              {plan.features.map((f, j) => (
-                <li key={j} className="flex items-start gap-3 text-slate-300 text-sm leading-tight">
-                  <Check size={18} className="text-orange-500 shrink-0" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-
-            <button 
-              onClick={() => router.push('/setup-clinic')}
-              className={`w-full py-4 rounded-2xl font-black transition-all cursor-pointer ${
-                plan.highlight 
-                  ? 'bg-orange-600 text-white hover:bg-orange-500 shadow-lg shadow-orange-900/20' 
-                  : 'bg-white text-black hover:bg-slate-200'
+          return (
+            <div 
+              key={plan.id} 
+              className={`relative p-8 rounded-[2.5rem] border transition-all duration-500 ${
+                isAdvanced 
+                  ? 'border-orange-500 bg-orange-500/[0.03] shadow-[0_0_50px_rgba(234,88,12,0.1)] scale-105 z-10' 
+                  : 'border-slate-800 bg-slate-900/40'
               }`}
             >
-              {plan.buttonText}
-            </button>
-          </div>
-        ))}
+              {isAdvanced && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-600 text-white text-[10px] font-black uppercase px-6 py-1.5 rounded-full tracking-widest shadow-lg">
+                  Recommended
+                </div>
+              )}
+              
+              <h3 className="text-2xl font-black text-white mb-2">{plan.name}</h3>
+              <p className="text-slate-500 text-sm mb-8 leading-relaxed">{plan.description}</p>
+              
+              <div className="mb-8">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-5xl font-black text-white">${parseInt(price)}</span>
+                  <span className="text-slate-500 font-bold">{isYearly ? '/yr' : '/mo'}</span>
+                </div>
+                {isYearly && !isFree && (
+                  <p className="text-orange-500 text-xs font-bold mt-2">Billed annually (${plan.price_monthly}/mo)</p>
+                )}
+              </div>
+
+              {/* Plan Limits - Detailed View */}
+              <div className="space-y-4 mb-10 p-5 bg-slate-950/50 rounded-3xl border border-slate-800/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
+                    <UserRound size={18} className="text-orange-500" />
+                    Doctors
+                  </div>
+                  <span className="text-white font-black">{plan.max_doctors}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
+                    <Users size={18} className="text-orange-500" />
+                    Assistants
+                  </div>
+                  <span className="text-white font-black">{plan.max_assistants}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
+                    <Contact2 size={18} className="text-orange-500" />
+                    Patients
+                  </div>
+                  <span className="text-white font-black">{plan.max_patients}</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => handleSelectPlan(plan.id, price)}
+                disabled={isSubmitting !== null}
+                className={`w-full py-5 rounded-2xl font-black transition-all cursor-pointer flex items-center justify-center gap-3 ${
+                  isAdvanced 
+                    ? 'bg-orange-600 text-white hover:bg-orange-500 hover:scale-[1.02]' 
+                    : 'bg-white text-black hover:bg-slate-200'
+                } disabled:opacity-50`}
+              >
+                {isSubmitting === plan.id ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  isFree ? "Start Free Trial" : "Activate Plan"
+                )}
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
