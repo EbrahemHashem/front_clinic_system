@@ -8,6 +8,7 @@ import { API_CONFIG } from '../lib/constants';
 const ClinicForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -21,37 +22,67 @@ const ClinicForm = () => {
     }
   };
 
+  // Inside ClinicForm.tsx -> handleSubmit function
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
     try {
-      // Replace with your actual Clinic creation endpoint
+      // 1. Pull the token from storage
+      const authData = localStorage.getItem('dentflow_auth');
+      if (!authData) {
+        router.push('/login');
+        return;
+      }
+      const { access_token } = JSON.parse(authData);
+
+      // 2. Send the request with the Token
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CREATE_CLINIC}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${access_token}` // The backend requires this!
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          address: formData.address,
+          phone_number: formData.phone
+        }),
       });
 
-      if (!response.ok) throw new Error('Failed to create clinic');
+      const data = await response.json();
 
-      router.push('/dashboard');
-    } catch (err) {
-      console.error(err);
+      if (!response.ok) throw new Error(data.error || 'Failed to create clinic');
+
+      // 3. Update Local Storage so the app knows the owner now HAS a clinic
+      const updatedAuth = JSON.parse(authData);
+      updatedAuth.user.clinic = data; // Store the new clinic info
+      localStorage.setItem('dentflow_auth', JSON.stringify(updatedAuth));
+
+      // 4. Move to the next step
+      router.push('/choose-plan');
+
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="w-full max-w-lg bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-10 rounded-[2.5rem] shadow-2xl relative z-10">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-black text-white mb-2">Setup Your Clinic</h1>
-        <p className="text-slate-400 font-medium">This information is required to initialize your workspace.</p>
+        <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Setup Your Clinic</h1>
+        <p className="text-slate-400 font-medium">Initialize your workspace to get started.</p>
       </div>
 
+      {error && (
+        <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-xs font-bold animate-in fade-in slide-in-from-top-2">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Clinic Name */}
         <div className="space-y-2">
           <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Clinic Name</label>
           <div className="relative group">
@@ -66,9 +97,8 @@ const ClinicForm = () => {
           </div>
         </div>
 
-        {/* Clinic Address */}
         <div className="space-y-2">
-          <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Location Address</label>
+          <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Address</label>
           <div className="relative group">
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
             <input
@@ -81,7 +111,6 @@ const ClinicForm = () => {
           </div>
         </div>
 
-        {/* Clinic Phone */}
         <div className="space-y-2">
           <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Clinic Phone Number</label>
           <div className="relative group">
