@@ -57,12 +57,10 @@ const PlanSelection = () => {
       const authData = JSON.parse(authString);
       const access_token = authData.access_token;
       
-      // Extract clinic_id from the user object or the root of authData
       const clinicId = authData.user?.clinic?.id || authData.clinic?.id;
 
       if (!clinicId) throw new Error("Clinic ID not found. Please complete clinic setup first.");
 
-      // THE REQUEST YOU REQUESTED
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SUBSCRIPTION}`, {
         method: 'POST',
         headers: {
@@ -72,7 +70,7 @@ const PlanSelection = () => {
         body: JSON.stringify({
           clinic_id: clinicId,
           subscription_plan_id: planId,
-          amount: parseFloat(amount) // Ensures it is a number like 0 or 500.00
+          amount: parseFloat(amount)
         }),
       });
 
@@ -82,8 +80,15 @@ const PlanSelection = () => {
         throw new Error(responseData.error || responseData.message || 'Failed to activate plan');
       }
 
-      // Success: Redirect to dashboard
-      window.location.href = "/dashboard";
+      // --- LOGIC UPDATED HERE ---
+      // Find the plan object to get its name
+      const selectedPlanObj = availablePlans.find(p => p.id === planId);
+      const planName = encodeURIComponent(selectedPlanObj?.name || 'Plan');
+      
+      // Redirect to subscription page with Name and Price
+      router.push(`/subscription?plan=${planName}&amount=${amount}`);
+      // --------------------------
+
     } catch (err: any) {
       setError(err.message);
       setIsSubmitting(null);
@@ -101,7 +106,6 @@ const PlanSelection = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4">
-      {/* Error Display */}
       {error && (
         <div className="mb-8 max-w-2xl mx-auto bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl flex items-center gap-3">
           <AlertCircle className="shrink-0" />
