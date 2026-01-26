@@ -19,7 +19,6 @@ const LoginForm: React.FC = () => {
     setError(null);
 
     try {
-      // 1. Fire the real API request
       const response = await fetch(
         `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`,
         {
@@ -32,19 +31,51 @@ const LoginForm: React.FC = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Invalid email or password");
+        // VALIDATION: Check the "error" key for the activation message
+        if (data.error === "Your account is not active. Please activate your account to continue.") {
+          
+          // 1. Save email so VerifyForm can use it
+          localStorage.setItem("dentflow_user", JSON.stringify({ email: formData.email }));
+          
+          // 2. Optional: Trigger auto-resend of OTP
+          try {
+             await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.RESEND_CODE}?email=${encodeURIComponent(formData.email)}`, { 
+               method: 'POST' 
+             });
+          } catch (resendErr) {
+             console.error("Auto-resend failed");
+          }
+
+          setError("Account not active. Redirecting to verification...");
+          
+          // 3. Redirect to verify page after a short delay
+          setTimeout(() => router.push("/verify"), 1500);
+          return;
+        }
+
+        // Handle other general errors
+        throw new Error(data.message || data.error || data.detail || "Invalid email or password");
       }
 
-      // 2. Consistent Storage
-      // We store the whole response so the layout can access data.user.role
+      // LOGIN SUCCESS LOGIC
       localStorage.setItem("dentflow_auth", JSON.stringify(data));
-      
       setSuccess(true);
 
-      // 3. Forced Redirect
-      // Using window.location.href ensures the layout re-reads localStorage correctly
       setTimeout(() => {
-        window.location.href = "/dashboard";
+        const user = data.user || {};
+        const role = user.role;
+
+        // Validation for Owner: check if clinic info exists in response
+        if (role === "owner") {
+            const hasClinic = user.clinic || data.clinic;
+            if (hasClinic) {
+                window.location.href = "/dashboard";
+            } else {
+                window.location.href = "/setup-clinic";
+            }
+        } else {
+            window.location.href = "/dashboard";
+        }
       }, 1000);
 
     } catch (err: any) {
@@ -63,16 +94,16 @@ const LoginForm: React.FC = () => {
         </div>
 
         {error && (
-          <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <span>{error}</span>
+          <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <span className="font-bold">{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm flex items-start gap-3">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Login successful! Redirecting...</span>
+          <div className="mb-6 bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+            <Loader2 className="w-5 h-5 animate-spin mt-0.5" />
+            <span className="font-bold">Login successful! Redirecting...</span>
           </div>
         )}
 
@@ -84,7 +115,8 @@ const LoginForm: React.FC = () => {
               <input
                 type="email"
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all"
+                className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-slate-600"
+                placeholder="doctor@clinic.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
@@ -92,15 +124,14 @@ const LoginForm: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between ml-1">
-              <label className="text-xs font-black uppercase tracking-widest text-slate-500">Password</label>
-            </div>
+            <label className="text-xs font-black uppercase tracking-widest text-slate-500 ml-1">Password</label>
             <div className="relative group">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-12 text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all"
+                className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-12 text-white focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none transition-all placeholder:text-slate-600"
+                placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
@@ -117,7 +148,7 @@ const LoginForm: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading || success}
-            className="w-full bg-orange-600 text-white font-black py-5 rounded-2xl hover:bg-orange-500 transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
+            className="w-full bg-orange-600 text-white font-black py-5 rounded-2xl hover:bg-orange-500 transition-all flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 shadow-xl shadow-orange-900/20"
           >
             {isLoading ? <Loader2 className="animate-spin" /> : <>Sign In <ArrowRight size={20} /></>}
           </button>
