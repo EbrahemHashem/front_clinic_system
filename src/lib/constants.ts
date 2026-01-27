@@ -9,7 +9,9 @@ export const API_CONFIG = {
     VERIFY_CODE: "core/verify_code/",
     RESEND_CODE: "core/resend_code/",
     CLINIC: "clinics/", // add , retrieve , update 
-    SUBSCRIPTION: "subscription/owner/" // two apis one for add subscription and one for retrieve subscriptions
-    // Add more endpoints here as your project grows
+    SUBSCRIPTION: "subscription/owner/" ,// two apis one for add subscription and one for retrieve subscriptions
+    ALL_STAFF: "staff/all/",
+    STAFF: "staff/",
+    ADD_USER: "core/add_user/",
   }
 };
