@@ -9,14 +9,13 @@ export default function DashboardPage() {
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const data = localStorage.getItem("dentflow_user");
+    // UPDATED: Read from 'dentflow_auth' to match your Layout logic
+    const data = localStorage.getItem("dentflow_auth");
     if (data) {
       try {
         const parsed = JSON.parse(data);
-        // SAFELY CHECK: 
-        // Real API stores the user object directly.
-        // Simulation logic might store an object with a user property.
-        const userRole = parsed.role || parsed.user?.role;
+        // Access the user object inside the auth data
+        const userRole = parsed.user?.role;
         
         if (userRole) {
           setRole(userRole);
@@ -36,10 +35,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <>
+    <div className="w-full">
       {role === "superadmin" && <SuperAdminView />}
       {role === "owner" && <OwnerView />}
       {(role === "doctor" || role === "assistant") && <ClinicalView />}
-    </>
+    </div>
   );
 }
