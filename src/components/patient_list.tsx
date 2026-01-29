@@ -71,15 +71,36 @@ export const PatientList = ({
 
       {/* Search Bar Section */}
       <div className="bg-slate-900/40 border border-slate-800 p-4 rounded-2xl backdrop-blur-md">
-        <div className="relative w-full">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+        <div className="relative w-full group">
+          {/* Functional Search Button */}
+          <button 
+            onClick={() => onSearch(localSearch)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-orange-500 transition-colors p-1 z-10"
+            title="Execute Search"
+          >
+            <Search size={18} />
+          </button>
+          
           <input 
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSearch(localSearch)}
             placeholder="Search name or phone..." 
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3.5 pl-12 text-white placeholder:text-slate-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all"
+            className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder:text-slate-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all"
           />
+          
+          {/* Optional: Clear button for mobile convenience */}
+          {localSearch && (localSearch !== "") && (
+            <button 
+              onClick={() => {
+                setLocalSearch("");
+                onSearch("");
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </div>
 
