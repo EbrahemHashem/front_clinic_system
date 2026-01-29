@@ -186,7 +186,7 @@ const PatientsPage = () => {
       formData={formData}
       setFormData={setFormData}
       onSubmit={handleSubmit}
-      onSearch={(val) => { setSearchTerm(val); loadData(val, 1); }}
+      onSearch={(val: string) => { setSearchTerm(val); loadData(val, 1); }} // [!code highlight]
       onDelete={handleDelete}
       onEdit={openEditModal}
       onOpenCreate={() => { resetForm(); setIsModalOpen(true); }}
