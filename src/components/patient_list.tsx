@@ -49,13 +49,13 @@ export const PatientList = ({
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header Section */}
-      <div className="flex justify-between items-end">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-full">
+      {/* Header Section - Responsive Flex */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h2 className="text-3xl font-black text-white flex items-center gap-3">
+          <h2 className="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
             <Users className="text-orange-500" size={32} /> Patients 
-            <span className="text-xs bg-orange-500/10 text-orange-500 px-3 py-1 rounded-full ml-2 font-bold border border-orange-500/20">
+            <span className="text-[10px] md:text-xs bg-orange-500/10 text-orange-500 px-3 py-1 rounded-full font-bold border border-orange-500/20">
               {total} Total
             </span>
           </h2>
@@ -63,7 +63,7 @@ export const PatientList = ({
         </div>
         <button 
           onClick={onOpenCreate}
-          className="bg-orange-600 px-6 py-3 rounded-xl font-bold text-white flex items-center gap-2 hover:bg-orange-500 transition-all shadow-lg shadow-orange-900/20 active:scale-95"
+          className="w-full sm:w-auto bg-orange-600 px-6 py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 hover:bg-orange-500 transition-all shadow-lg shadow-orange-900/20 active:scale-95"
         >
           <Plus size={20} /> Add New Patient
         </button>
@@ -77,99 +77,101 @@ export const PatientList = ({
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSearch(localSearch)}
-            placeholder="Search by name or phone number (Press Enter)..." 
+            placeholder="Search name or phone..." 
             className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3.5 pl-12 text-white placeholder:text-slate-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all"
           />
         </div>
       </div>
 
-      {/* Patients Table Section */}
-      <div className="bg-slate-900/40 border border-slate-800 rounded-[2rem] overflow-hidden backdrop-blur-sm">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-800/40 text-slate-500 text-[11px] font-black uppercase tracking-widest border-b border-slate-800">
-              <th className="px-8 py-5">Patient Details</th>
-              <th className="px-6 py-5">Phone Number</th>
-              <th className="px-6 py-5">Medical Staff</th>
-              <th className="px-6 py-5">Birth Date</th>
-              <th className="px-8 py-5 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800/50">
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="py-24 text-center">
-                  <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="animate-spin text-orange-500" size={32} />
-                    <span className="text-slate-500 font-bold text-sm">Fetching records...</span>
-                  </div>
-                </td>
+      {/* Patients Table Section - Added overflow-x-auto */}
+      <div className="bg-slate-900/40 border border-slate-800 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden backdrop-blur-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[700px]">
+            <thead>
+              <tr className="bg-slate-800/40 text-slate-500 text-[11px] font-black uppercase tracking-widest border-b border-slate-800">
+                <th className="px-4 md:px-8 py-5">Patient Details</th>
+                <th className="px-4 md:px-6 py-5">Phone Number</th>
+                <th className="px-4 md:px-6 py-5">Medical Staff</th>
+                <th className="px-4 md:px-6 py-5">Birth Date</th>
+                <th className="px-4 md:px-8 py-5 text-right">Actions</th>
               </tr>
-            ) : patients.length > 0 ? patients.map((p) => (
-              <tr key={p.id} className="group hover:bg-slate-800/30 transition-all">
-                <td className="px-8 py-5">
-                  <Link href={`/dashboard/patients/${p.id}`} className="flex items-center gap-4 group/item">
-                    <div className="w-11 h-11 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-orange-500 font-black uppercase group-hover/item:border-orange-500/50 transition-all shadow-inner">
-                      {p.name?.[0] || "?"}
+            </thead>
+            <tbody className="divide-y divide-slate-800/50">
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="py-24 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="animate-spin text-orange-500" size={32} />
+                      <span className="text-slate-500 font-bold text-sm">Fetching records...</span>
                     </div>
-                    <div>
-                        <p className="text-white font-bold group-hover/item:text-orange-500 transition-colors">{p.name}</p>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Ref: {p.id.substring(0,8)}</p>
-                    </div>
-                  </Link>
-                </td>
-                <td className="px-6 py-5 text-slate-300 font-semibold">{p.phone_number}</td>
-                <td className="px-6 py-5">
-                  <p className="text-slate-200 text-sm font-bold">{p.doctor}</p>
-                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-tight">{p.assistant || "No assistant assigned"}</p>
-                </td>
-                <td className="px-6 py-5 text-slate-400 text-sm font-medium">{p.birth_date}</td>
-                <td className="px-8 py-5 text-right">
-                  <div className="flex justify-end items-center gap-1">
-                    <Link 
-                      href={`/dashboard/patients/${p.id}`}
-                      className="p-2.5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl transition-all"
-                      title="View Profile"
-                    >
-                      <Eye size={18} />
+                  </td>
+                </tr>
+              ) : patients.length > 0 ? patients.map((p) => (
+                <tr key={p.id} className="group hover:bg-slate-800/30 transition-all">
+                  <td className="px-4 md:px-8 py-5">
+                    <Link href={`/dashboard/patients/${p.id}`} className="flex items-center gap-4 group/item">
+                      <div className="w-10 h-10 md:w-11 md:h-11 shrink-0 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-orange-500 font-black uppercase group-hover/item:border-orange-500/50 transition-all shadow-inner">
+                        {p.name?.[0] || "?"}
+                      </div>
+                      <div className="min-w-0">
+                          <p className="text-white font-bold group-hover/item:text-orange-500 transition-colors truncate">{p.name}</p>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Ref: {p.id.substring(0,8)}</p>
+                      </div>
                     </Link>
-                    <button 
-                      onClick={() => onEdit(p)} 
-                      className="p-2.5 text-slate-500 hover:text-orange-500 hover:bg-orange-500/10 rounded-xl transition-all"
-                      title="Edit Record"
-                    >
-                      <Edit3 size={18} />
-                    </button>
-                    <button 
-                      onClick={() => onDelete(p.id)} 
-                      className="p-2.5 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                      title="Delete Record"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan={5} className="py-24 text-center">
-                  <div className="flex flex-col items-center opacity-40">
-                    <Users size={48} className="text-slate-600 mb-2" />
-                    <p className="text-slate-500 font-black uppercase tracking-widest text-xs">No patient records found</p>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                  </td>
+                  <td className="px-4 md:px-6 py-5 text-slate-300 font-semibold">{p.phone_number}</td>
+                  <td className="px-4 md:px-6 py-5">
+                    <p className="text-slate-200 text-sm font-bold truncate">{p.doctor}</p>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-tight truncate">{p.assistant || "No assistant"}</p>
+                  </td>
+                  <td className="px-4 md:px-6 py-5 text-slate-400 text-sm font-medium">{p.birth_date}</td>
+                  <td className="px-4 md:px-8 py-5 text-right">
+                    <div className="flex justify-end items-center gap-1">
+                      <Link 
+                        href={`/dashboard/patients/${p.id}`}
+                        className="p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
+                        title="View Profile"
+                      >
+                        <Eye size={18} />
+                      </Link>
+                      <button 
+                        onClick={() => onEdit(p)} 
+                        className="p-2 text-slate-500 hover:text-orange-500 hover:bg-orange-500/10 rounded-lg transition-all"
+                        title="Edit Record"
+                      >
+                        <Edit3 size={18} />
+                      </button>
+                      <button 
+                        onClick={() => onDelete(p.id)} 
+                        className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                        title="Delete Record"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={5} className="py-24 text-center">
+                    <div className="flex flex-col items-center opacity-40">
+                      <Users size={48} className="text-slate-600 mb-2" />
+                      <p className="text-slate-500 font-black uppercase tracking-widest text-xs">No records found</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Modal - Dark Themed */}
+      {/* Modal - Responsive Grid and Sizing */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-[2.5rem] p-10 shadow-2xl animate-in zoom-in duration-200">
-                <div className="flex justify-between items-center mb-8">
-                    <h3 className="text-2xl font-black text-white">
+            <div className="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-10 shadow-2xl animate-in zoom-in duration-200 max-h-[95vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-6 md:mb-8">
+                    <h3 className="text-xl md:text-2xl font-black text-white">
                       {editingId ? 'Update Patient' : 'Register Patient'}
                     </h3>
                     <button 
@@ -180,22 +182,22 @@ export const PatientList = ({
                     </button>
                 </div>
                 
-                <form onSubmit={onSubmit} className="grid grid-cols-2 gap-6">
-                    <div className="col-span-2 space-y-1.5">
+                <form onSubmit={onSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    <div className="sm:col-span-2 space-y-1.5">
                         <label className="text-[10px] text-slate-500 font-black uppercase ml-1 tracking-widest">Full Name</label>
                         <input 
                           required 
-                          className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl md:rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
                           value={formData.name} 
                           onChange={e => setFormData({...formData, name: e.target.value})}
-                          placeholder="Enter patient full name"
+                          placeholder="Enter patient name"
                         />
                     </div>
                     
                     <div className="space-y-1.5">
                         <label className="text-[10px] text-slate-500 font-black uppercase ml-1 tracking-widest">Gender</label>
                         <select 
-                          className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 appearance-none transition-all" 
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl md:rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 appearance-none transition-all" 
                           value={formData.gender} 
                           onChange={e => setFormData({...formData, gender: e.target.value})}
                         >
@@ -210,20 +212,20 @@ export const PatientList = ({
                             required 
                             type="date" 
                             max={today}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl md:rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
                             value={formData.birth_date} 
                             onChange={e => setFormData({...formData, birth_date: e.target.value})}
                         />
                     </div>
 
-                    <div className="col-span-2 space-y-1.5">
+                    <div className="sm:col-span-2 space-y-1.5">
                         <label className="text-[10px] text-slate-500 font-black uppercase ml-1 tracking-widest">Phone Number</label>
                         <input 
                             required 
                             type="text"
                             inputMode="numeric"
                             placeholder="e.g., 01xxxxxxxxx"
-                            className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl md:rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
                             value={formData.phone_number} 
                             onChange={e => {
                                 const val = e.target.value.replace(/\D/g, '');
@@ -236,7 +238,7 @@ export const PatientList = ({
                         <label className="text-[10px] text-slate-500 font-black uppercase ml-1 tracking-widest">Doctor</label>
                         <select 
                           required 
-                          className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl md:rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
                           value={formData.doctor_id} 
                           onChange={e => setFormData({...formData, doctor_id: e.target.value})}
                         >
@@ -246,9 +248,9 @@ export const PatientList = ({
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="text-[10px] text-slate-500 font-black uppercase ml-1 tracking-widest">Assistant (Optional)</label>
+                        <label className="text-[10px] text-slate-500 font-black uppercase ml-1 tracking-widest">Assistant</label>
                         <select 
-                          className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl md:rounded-2xl p-3.5 text-white outline-none focus:border-orange-500 transition-all" 
                           value={formData.assistant_id} 
                           onChange={e => setFormData({...formData, assistant_id: e.target.value})}
                         >
@@ -260,9 +262,9 @@ export const PatientList = ({
                     <button 
                       type="submit" 
                       disabled={isSubmitting} 
-                      className="col-span-2 bg-orange-600 py-4 rounded-2xl font-black text-white hover:bg-orange-500 transition-all mt-4 disabled:opacity-50 shadow-xl shadow-orange-900/30 flex items-center justify-center gap-2"
+                      className="sm:col-span-2 bg-orange-600 py-4 rounded-xl md:rounded-2xl font-black text-white hover:bg-orange-500 transition-all mt-4 disabled:opacity-50 shadow-xl shadow-orange-900/30 flex items-center justify-center gap-2"
                     >
-                        {isSubmitting ? <Loader2 className="animate-spin" size={24} /> : (editingId ? "Update Patient Record" : "Create Patient Record")}
+                        {isSubmitting ? <Loader2 className="animate-spin" size={24} /> : (editingId ? "Update Patient" : "Create Patient")}
                     </button>
                 </form>
             </div>
