@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { API_CONFIG } from "@/lib/constants";
-import { PatientList } from "@/components/patient_list";
+import { PatientList } from "@/components/patients/patient_list";
 
 export interface Patient {
   id: string;

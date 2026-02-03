@@ -15,6 +15,7 @@ export const API_CONFIG = {
     ADD_USER: "core/add_user/",
     PATIENTS: "patients/",
     ATTACHMENTS: "patients/attach/",
-    APPOINTMENTS: "appointments/"
+    APPOINTMENTS: "appointments/",
+    SERVICES: "services/"
   }
 };
