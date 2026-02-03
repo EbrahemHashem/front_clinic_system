@@ -6,8 +6,8 @@ import {
   ChevronLeft, ChevronRight, Loader2, Trash2, Edit, Filter
 } from "lucide-react";
 import { API_CONFIG } from "@/lib/constants";
-import { CreateAppointmentModal } from "@/components/create_appointment";
-import { EditAppointmentModal } from "@/components/edit_appointment";
+import { EditAppointmentModal } from "@/components/appointments/edit_appointment";
+import { CreateAppointmentModal } from "@/components/appointments/create_appointment";
 
 
 interface Appointment {
