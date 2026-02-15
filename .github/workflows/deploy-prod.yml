@@ -28,14 +28,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+          # We hardcode 'prod' here since this file only runs for the main branch
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:prod
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ env.API_URL }
+            NEXT_PUBLIC_API_URL=https://myclinic1.com/api
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
