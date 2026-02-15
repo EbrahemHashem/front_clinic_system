@@ -6,6 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  API_URL: "https://myclinic1.com/api"
 
 jobs:
   build-and-deploy:
