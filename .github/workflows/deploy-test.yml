@@ -45,5 +45,5 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /home/ubuntu/app/testing
-            docker compose pull frontend
-            docker compose up -d frontend
+            sudo docker-compose pull frontend
+            sudo docker-compose up -d frontend
