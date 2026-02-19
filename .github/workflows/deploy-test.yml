@@ -35,7 +35,7 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test
           build-args: |
-            NEXT_PUBLIC_API_URL=https://test.myclinic1.com/api
+            NEXT_PUBLIC_API_URL=https://test.myclinic1.com/api/
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
