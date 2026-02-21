@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Loader2, AlertCircle, ArrowRight, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { API_CONFIG } from '@/lib/constants';
+import { API_CONFIG } from '../lib/constants';
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();

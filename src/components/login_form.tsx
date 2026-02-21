@@ -11,7 +11,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { API_CONFIG } from "@/lib/constants";
+import { API_CONFIG } from "../lib/constants";
 
 const LoginForm: React.FC = () => {
   const router = useRouter();

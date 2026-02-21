@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Mail, Loader2, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { API_CONFIG } from '@/lib/constants';
+import { API_CONFIG } from '../lib/constants';
 
 const ForgotPasswordForm: React.FC = () => {
   const router = useRouter();
