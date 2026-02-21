@@ -1,9 +1,18 @@
 "use client";
 
 import React from "react";
-import { 
-  LayoutDashboard, Calendar, Users, Stethoscope, 
-  UserPlus, ScrollText, Receipt, LogOut, Building, Settings, CreditCard 
+import {
+  LayoutDashboard,
+  Calendar,
+  Users,
+  Stethoscope,
+  UserPlus,
+  ScrollText,
+  Receipt,
+  LogOut,
+  Building,
+  Settings,
+  CreditCard,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -28,7 +37,9 @@ const OwnerSidebar = () => {
           <Building className="text-white" size={24} />
         </div>
         <div>
-          <span className="text-lg font-black tracking-tighter text-white block leading-none">DENTFLOW</span>
+          <span className="text-lg font-black tracking-tighter text-white block leading-none">
+            DENTFLOW
+          </span>
         </div>
       </div>
 
@@ -38,7 +49,9 @@ const OwnerSidebar = () => {
             key={item.name}
             onClick={() => router.push(item.path)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all cursor-pointer group ${
-              pathname === item.path ? "bg-orange-600 text-white" : "text-slate-500 hover:bg-slate-800 hover:text-white"
+              pathname === item.path
+                ? "bg-orange-600 text-white"
+                : "text-slate-500 hover:bg-slate-800 hover:text-white"
             }`}
           >
             <item.icon size={20} />
@@ -48,13 +61,25 @@ const OwnerSidebar = () => {
       </nav>
 
       <div className="pt-6 border-t border-slate-800 space-y-2">
-        <button onClick={() => router.push("/dashboard/subscription")} className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-slate-500 hover:bg-slate-800 transition-all cursor-pointer">
+        <button
+          onClick={() => router.push("/dashboard/subscription")}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all cursor-pointer ${pathname === "/dashboard/subscription" ? "bg-orange-600 text-white" : "text-slate-500 hover:bg-slate-800 hover:text-white"}`}
+        >
           <CreditCard size={20} /> Subscription
         </button>
-        <button onClick={() => router.push("/dashboard/settings")} className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-slate-500 hover:bg-slate-800 transition-all cursor-pointer">
+        <button
+          onClick={() => router.push("/dashboard/settings")}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all cursor-pointer ${pathname === "/dashboard/settings" ? "bg-orange-600 text-white" : "text-slate-500 hover:bg-slate-800 hover:text-white"}`}
+        >
           <Settings size={20} /> Settings
         </button>
-        <button onClick={() => { localStorage.removeItem("dentflow_auth"); window.location.href = "/login"; }} className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-red-500 hover:bg-red-500/10 transition-all cursor-pointer">
+        <button
+          onClick={() => {
+            localStorage.removeItem("dentflow_auth");
+            window.location.href = "/login";
+          }}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-red-500 hover:bg-red-500/10 transition-all cursor-pointer"
+        >
           <LogOut size={20} /> Logout
         </button>
       </div>

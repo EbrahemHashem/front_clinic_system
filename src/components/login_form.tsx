@@ -56,23 +56,7 @@ const LoginForm: React.FC = () => {
         throw new Error(data.message || data.error || "Login failed");
       }
 
-      // SAVE ACCESS TOKEN HERE
-      // Storing the full object: { user: {...}, access_token: "..." }
-      localStorage.setItem("dentflow_auth", JSON.stringify(data));
-
-      setSuccess(true);
-
-      setTimeout(() => {
-        const user = data.user;
-        // If owner has no clinic, go to setup. Otherwise, dashboard.
-        if (user.role === "owner" && !user.clinic && !data.clinic) {
-          window.location.href = "/setup-clinic";
-        } else {
-          window.location.href = "/dashboard";
-        }
-      }, 1000);
-
-      // LOGIN SUCCESS LOGIC
+      // Save auth data
       localStorage.setItem("dentflow_auth", JSON.stringify(data));
       setSuccess(true);
 
@@ -80,13 +64,21 @@ const LoginForm: React.FC = () => {
         const user = data.user || {};
         const role = user.role;
 
-        // Validation for Owner: check if clinic info exists in response
         if (role === "owner") {
-          const hasClinic = user.clinic || data.clinic;
-          if (hasClinic) {
-            window.location.href = "/dashboard";
-          } else {
+          const clinic = user.clinic || data.clinic;
+
+          if (!clinic) {
+            // No clinic created yet → setup clinic
             window.location.href = "/setup-clinic";
+          } else if (!clinic.subscription) {
+            // Clinic exists but no subscription chosen yet → choose plan
+            window.location.href = "/choose-plan";
+          } else if (!clinic.subscription.is_active) {
+            // Subscription exists but not activated by admin → waiting state
+            window.location.href = "/waiting-state";
+          } else {
+            // Active subscription → dashboard
+            window.location.href = "/dashboard";
           }
         } else {
           window.location.href = "/dashboard";
