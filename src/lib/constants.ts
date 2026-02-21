@@ -1,7 +1,7 @@
 // lib/constants.ts
 
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:9001/api",
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL ?? "http://test.myclinic1.com/api/",
   ENDPOINTS: {
     LOGIN: "core/login/",
     REGISTER: "core/register/",
