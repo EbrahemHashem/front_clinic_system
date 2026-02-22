@@ -64,6 +64,12 @@ const LoginForm: React.FC = () => {
         const user = data.user || {};
         const role = user.role;
 
+        // Superadmin bypasses all clinic/plan/subscription checks
+        if (role === "superadmin") {
+          window.location.href = "/dashboard";
+          return;
+        }
+
         if (role === "owner") {
           const clinic = user.clinic || data.clinic;
 
