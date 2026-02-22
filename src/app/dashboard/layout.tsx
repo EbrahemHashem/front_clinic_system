@@ -27,6 +27,11 @@ export default function DashboardLayout({
     const isRecord = (value: unknown): value is Record<string, unknown> =>
       typeof value === "object" && value !== null;
 
+    const hasEnabledClinic = (clinic: unknown) => {
+      if (!isRecord(clinic)) return false;
+      return clinic.disabled === false;
+    };
+
     const isSubscriptionActive = (subscription: unknown) => {
       if (!subscription) return false;
       if (!isRecord(subscription)) return false;
@@ -103,6 +108,15 @@ export default function DashboardLayout({
 
         // Superadmins bypass subscription check
         if (isSuperUser || parsed.user.role === "superadmin") {
+          setLoading(false);
+          return;
+        }
+
+        // Owners with an existing enabled clinic can access dashboard directly.
+        if (
+          parsed.user.role === "owner" &&
+          hasEnabledClinic(parsed.user?.clinic)
+        ) {
           setLoading(false);
           return;
         }
