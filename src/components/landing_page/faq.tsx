@@ -39,16 +39,16 @@ const FAQItem = ({ question, answer }: { question: string, answer: string, key?:
 const FAQ: React.FC = () => {
   const faqs = [
     {
-      question: "Is DentFlow HIPAA compliant?",
-      answer: "Yes, absolutely. DentFlow is fully HIPAA compliant. We use bank-grade AES-256 encryption for all data at rest and TLS 1.3 for data in transit. We also sign Business Associate Agreements (BAAs) with all our covered entity clients."
+      question: "Is My Clinic HIPAA compliant?",
+      answer: "Yes, absolutely. My Clinic is fully HIPAA compliant. We use bank-grade AES-256 encryption for all data at rest and TLS 1.3 for data in transit. We also sign Business Associate Agreements (BAAs) with all our covered entity clients."
     },
     {
       question: "How long does it take to migrate my current data?",
       answer: "Most migrations take between 2 to 5 business days. Our dedicated migration team handles everything from patient records to clinical charts and billing history. We support imports from all major legacy dental software."
     },
     {
-      question: "Can I use DentFlow on my tablet or mobile device?",
-      answer: "Yes, DentFlow is a cloud-native platform. It works seamlessly on iPads, Android tablets, and smartphones via any modern web browser, allowing you to manage your clinic from anywhere."
+      question: "Can I use My Clinic on my tablet or mobile device?",
+      answer: "Yes, My Clinic is a cloud-native platform. It works seamlessly on iPads, Android tablets, and smartphones via any modern web browser, allowing you to manage your clinic from anywhere."
     },
     {
       question: "Do you offer multi-location support?",

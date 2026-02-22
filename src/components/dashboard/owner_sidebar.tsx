@@ -38,7 +38,7 @@ const OwnerSidebar = () => {
         </div>
         <div>
           <span className="text-lg font-black tracking-tighter text-white block leading-none">
-            DENTFLOW
+            MY CLINIC
           </span>
         </div>
       </div>

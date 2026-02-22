@@ -4,6 +4,13 @@
 import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 
+const egpFormatter = new Intl.NumberFormat("en-EG", {
+  style: "currency",
+  currency: "EGP",
+  currencyDisplay: "narrowSymbol",
+  maximumFractionDigits: 0,
+});
+
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
@@ -75,8 +82,9 @@ const Pricing: React.FC = () => {
                 <h3 className="text-2xl font-black text-white mb-2">{plan.name}</h3>
                 <p className="text-slate-400 text-sm mb-8 leading-relaxed">{plan.desc}</p>
                 <div className="flex items-baseline gap-1">
-                  {plan.price !== 'Custom' && <span className="text-sm font-bold text-slate-500">$</span>}
-                  <span className="text-5xl font-black text-white tracking-tighter">{plan.price}</span>
+                  <span className="text-5xl font-black text-white tracking-tighter">
+                    {plan.price !== 'Custom' ? egpFormatter.format(Number(plan.price)) : plan.price}
+                  </span>
                   <span className="text-slate-500 font-bold ml-1">{plan.period}</span>
                 </div>
               </div>

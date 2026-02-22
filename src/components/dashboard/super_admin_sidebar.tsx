@@ -54,7 +54,7 @@ const SuperAdminSidebar = () => {
         </div>
         <div>
           <span className="text-lg font-black tracking-tighter text-white block leading-none">
-            DENTFLOW
+            MY CLINIC
           </span>
           <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">
             Admin Panel
@@ -99,7 +99,7 @@ const SuperAdminSidebar = () => {
           <div className="flex-1 min-w-0">
             <p className="text-sm font-bold text-white truncate">Super Admin</p>
             <p className="text-[11px] text-slate-500 truncate">
-              admin@dentflow.com
+              admin@myclinic.com
             </p>
           </div>
         </div>

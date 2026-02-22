@@ -76,22 +76,16 @@ const LoginForm: React.FC = () => {
           if (!clinic) {
             // No clinic created yet → setup clinic
             window.location.href = "/setup-clinic";
-          } else if (!clinic.subscription) {
-            // Clinic exists but no subscription chosen yet → choose plan
-            window.location.href = "/choose-plan";
-          } else if (!clinic.subscription.is_active) {
-            // Subscription exists but not activated by admin → waiting state
-            window.location.href = "/waiting-state";
           } else {
-            // Active subscription → dashboard
+            // Let dashboard layout validate subscription from APIs.
             window.location.href = "/dashboard";
           }
         } else {
           window.location.href = "/dashboard";
         }
       }, 1000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setIsLoading(false);
     }

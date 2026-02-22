@@ -4,6 +4,13 @@ import React, { useState, Suspense } from 'react';
 import { Wallet, CheckCircle2, ArrowRight, Loader2, ExternalLink, Phone } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
+const egpFormatter = new Intl.NumberFormat("en-EG", {
+  style: "currency",
+  currency: "EGP",
+  currencyDisplay: "narrowSymbol",
+  maximumFractionDigits: 0,
+});
+
 // Using a wrapper component to handle useSearchParams safely with Next.js Suspense
 const SubscriptionContent = () => {
   const router = useRouter();
@@ -12,6 +19,7 @@ const SubscriptionContent = () => {
   // 1. Get the plan details from the URL parameters
   const planName = searchParams.get('plan') || 'Selected Plan';
   const planPrice = searchParams.get('amount') || '0';
+  const formattedPlanPrice = egpFormatter.format(Number(planPrice));
 
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'instapay'>('cash');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +49,7 @@ const SubscriptionContent = () => {
             <p className="text-slate-500 text-xs">Complete payment to activate workspace</p>
           </div>
           <div className="text-right">
-            <p className="text-white text-2xl font-black">${planPrice}</p>
+            <p className="text-white text-2xl font-black">{formattedPlanPrice}</p>
             <CheckCircle2 className="text-orange-500 ml-auto mt-1" size={20} />
           </div>
         </div>
@@ -76,7 +84,7 @@ const SubscriptionContent = () => {
         <div className="mt-8 p-5 bg-orange-600/10 border border-orange-600/20 rounded-3xl">
           <p className="text-orange-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Action Required</p>
           <p className="text-slate-300 text-sm mb-4 leading-relaxed">
-            Please transfer <span className="text-white font-bold">${planPrice}</span> using the link below. Once done, click confirm to notify our admin team.
+            Please transfer <span className="text-white font-bold">{formattedPlanPrice}</span> using the link below. Once done, click confirm to notify our admin team.
           </p>
           <a 
             href={paymentLinks[paymentMethod]} 
@@ -91,7 +99,7 @@ const SubscriptionContent = () => {
         {/* Updated Totals Section */}
         <div className="mt-10 pt-6 border-t border-slate-800 flex justify-between items-center">
           <span className="text-lg font-black text-white">Total Amount</span>
-          <span className="text-3xl font-black text-orange-500 tracking-tight">${planPrice}</span>
+          <span className="text-3xl font-black text-orange-500 tracking-tight">{formattedPlanPrice}</span>
         </div>
 
         <button

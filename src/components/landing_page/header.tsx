@@ -27,7 +27,7 @@ const Header = () => {
             </h1>
 
             <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto lg:mx-0">
-              DentFlow is the all-in-one clinical platform designed to optimize
+              My Clinic is the all-in-one clinical platform designed to optimize
               every touchpoint of your practice.
             </p>
 

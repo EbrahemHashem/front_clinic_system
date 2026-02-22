@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
             <Activity className="text-white w-6 h-6" />
           </div>
           <span className="text-2xl font-black transition-colors duration-300 group-hover:text-orange-500">
-            DentFlow
+            My Clinic
           </span>
         </button>
 

@@ -31,6 +31,13 @@ interface UpgradePlanModalProps {
   isYearly: boolean;
 }
 
+const egpFormatter = new Intl.NumberFormat("en-EG", {
+  style: "currency",
+  currency: "EGP",
+  currencyDisplay: "narrowSymbol",
+  maximumFractionDigits: 0,
+});
+
 export default function UpgradePlanModal({
   isOpen,
   onClose,
@@ -157,7 +164,7 @@ export default function UpgradePlanModal({
                 <p className="text-white font-bold">{currentPlan.name}</p>
               </div>
               <p className="text-slate-400 font-black text-lg">
-                ${parseInt(currentPrice)}
+                {egpFormatter.format(parseFloat(currentPrice))}
                 <span className="text-xs text-slate-600 font-bold">
                   /{isYearly ? "yr" : "mo"}
                 </span>
@@ -181,7 +188,7 @@ export default function UpgradePlanModal({
               <p className="text-white font-bold">{selectedPlan.name}</p>
             </div>
             <p className="text-orange-500 font-black text-lg">
-              {isFree ? "Free" : `$${parseInt(selectedPrice)}`}
+              {isFree ? "Free" : egpFormatter.format(parseFloat(selectedPrice))}
               {!isFree && (
                 <span className="text-xs text-orange-700 font-bold">
                   /{isYearly ? "yr" : "mo"}

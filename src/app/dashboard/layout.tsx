@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react"; // Import for mobile toggle
+import { Menu } from "lucide-react"; // Import for mobile toggle
 import SuperAdminSidebar from "@/components/dashboard/super_admin_sidebar";
 import ClinicalSidebar from "@/components/dashboard/clinical_sidebar";
 import OwnerSidebar from "@/components/dashboard/owner_sidebar";
@@ -13,12 +13,70 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{
+    role: string;
+    first_name?: string;
+    last_name?: string;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
   const router = useRouter();
 
   useEffect(() => {
+    const isRecord = (value: unknown): value is Record<string, unknown> =>
+      typeof value === "object" && value !== null;
+
+    const isSubscriptionActive = (subscription: unknown) => {
+      if (!subscription) return false;
+      if (!isRecord(subscription)) return false;
+
+      if (typeof subscription.is_active === "boolean") {
+        return subscription.is_active;
+      }
+
+      if (typeof subscription.approved === "boolean") {
+        return subscription.approved;
+      }
+
+      if (typeof subscription.status === "string") {
+        const status = subscription.status.toLowerCase();
+        return status === "active" || status === "trial";
+      }
+
+      return false;
+    };
+
+    const extractCurrentSubscription = (payload: unknown) => {
+      if (!payload) return null;
+
+      if (isRecord(payload)) {
+        if (payload.current_subscription) return payload.current_subscription;
+        if (payload.subscription) return payload.subscription;
+      }
+
+      if (Array.isArray(payload)) {
+        // Ignore pure plans list; find objects that look like subscriptions.
+        return (
+          payload.find((item) => {
+            if (!isRecord(item)) return false;
+            const looksLikePlan =
+              "price_monthly" in item && "max_doctors" in item;
+            if (looksLikePlan) return false;
+
+            return (
+              "is_active" in item ||
+              "approved" in item ||
+              "status" in item ||
+              "start_date" in item ||
+              "end_date" in item
+            );
+          }) ?? null
+        );
+      }
+
+      return null;
+    };
+
     const checkAuthAndSubscription = async () => {
       const authData = localStorage.getItem("dentflow_auth");
       if (!authData) {
@@ -41,7 +99,7 @@ export default function DashboardLayout({
           return;
         }
 
-        // Check subscription status via clinic endpoint
+        // First try clinic endpoint for subscription info
         const response = await fetch(
           `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CLINIC}`,
           {
@@ -49,23 +107,41 @@ export default function DashboardLayout({
           },
         );
 
+        let subscription: unknown = null;
+
         if (response.ok) {
           const data = await response.json();
           const clinicData = Array.isArray(data) ? data[0] : data;
+          subscription = clinicData?.subscription ?? null;
+        }
 
-          if (!clinicData?.subscription) {
-            // No subscription at all → choose a plan first
-            router.push("/choose-plan");
-            return;
-          }
+        // Fallback to owner subscription endpoint when clinic payload is minimal
+        if (!subscription) {
+          const subRes = await fetch(
+            `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SUBSCRIPTION}`,
+            {
+              headers: { Authorization: `Bearer ${parsed.access_token}` },
+            },
+          );
 
-          if (!clinicData.subscription.is_active) {
-            // Subscription exists but not activated by admin → waiting state
-            router.push("/waiting-state");
-            return;
+          if (subRes.ok) {
+            const subData = await subRes.json();
+            subscription = extractCurrentSubscription(subData);
           }
         }
-      } catch (e) {
+
+        if (!subscription) {
+          // No subscription chosen yet
+          router.push("/choose-plan");
+          return;
+        }
+
+        if (!isSubscriptionActive(subscription)) {
+          // Subscription exists but not active/approved yet
+          router.push("/waiting-state");
+          return;
+        }
+      } catch {
         router.push("/login");
       } finally {
         setLoading(false);

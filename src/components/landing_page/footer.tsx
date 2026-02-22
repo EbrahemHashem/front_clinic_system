@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
               <div className="w-8 h-8 bg-orange-600 rounded flex items-center justify-center">
                 <span className="text-white font-bold text-xl">D</span>
               </div>
-              <span className="text-xl font-bold tracking-tight text-white">DentFlow</span>
+              <span className="text-xl font-bold tracking-tight text-white">My Clinic</span>
             </div>
             <p className="text-slate-400 leading-relaxed text-sm mb-6">
               The operating system for modern dentistry. Secure, fast, and reliable practice management.
@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs text-slate-500">© 2024 DentFlow Inc. All rights reserved.</p>
+          <p className="text-xs text-slate-500">© 2024 My Clinic. All rights reserved.</p>
           <div className="flex gap-8 text-xs text-slate-500">
             <a href="#" className="hover:text-slate-300">Privacy Policy</a>
             <a href="#" className="hover:text-slate-300">Terms of Service</a>

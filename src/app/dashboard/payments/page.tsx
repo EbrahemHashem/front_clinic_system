@@ -47,6 +47,13 @@ const emptyPlanForm: PlanFormState = {
   is_active: true,
 };
 
+const egpFormatter = new Intl.NumberFormat("en-EG", {
+  style: "currency",
+  currency: "EGP",
+  currencyDisplay: "narrowSymbol",
+  maximumFractionDigits: 0,
+});
+
 export default function PaymentsPage() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [requests, setRequests] = useState<SubscriptionRequest[]>([]);
@@ -365,8 +372,12 @@ export default function PaymentsPage() {
               {selectedPlan ? (
                 <div className="space-y-2 text-sm">
                   <p className="text-white font-bold">{selectedPlan.name}</p>
-                  <p className="text-slate-400">Monthly: ${selectedPlan.price_monthly}</p>
-                  <p className="text-slate-400">Yearly: ${selectedPlan.price_yearly}</p>
+                  <p className="text-slate-400">
+                    Monthly: {egpFormatter.format(Number(selectedPlan.price_monthly))}
+                  </p>
+                  <p className="text-slate-400">
+                    Yearly: {egpFormatter.format(Number(selectedPlan.price_yearly))}
+                  </p>
                   <p className="text-slate-400">Max doctors: {selectedPlan.max_doctors}</p>
                   <p className="text-slate-400">Max assistants: {selectedPlan.max_assistants}</p>
                   <p className="text-slate-400">Max patients: {selectedPlan.max_patients}</p>
@@ -405,8 +416,12 @@ export default function PaymentsPage() {
                     plans.map((plan) => (
                       <tr key={plan.id} className="border-t border-slate-800 text-sm">
                         <td className="py-3 text-white font-bold">{plan.name}</td>
-                        <td className="py-3 text-slate-300">${plan.price_monthly}</td>
-                        <td className="py-3 text-slate-300">${plan.price_yearly}</td>
+                        <td className="py-3 text-slate-300">
+                          {egpFormatter.format(Number(plan.price_monthly))}
+                        </td>
+                        <td className="py-3 text-slate-300">
+                          {egpFormatter.format(Number(plan.price_yearly))}
+                        </td>
                         <td className="py-3 text-slate-400">
                           D: {plan.max_doctors} | A: {plan.max_assistants} | P: {plan.max_patients}
                         </td>

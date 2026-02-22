@@ -10,7 +10,7 @@ const WaitingState = () => {
   const [lastChecked, setLastChecked] = useState(new Date().toLocaleTimeString());
 
   const SUPPORT_NUMBER = "201097025711"; 
-  const WHATSAPP_MESSAGE = encodeURIComponent("Hello DentFlow Support, I'm checking on my clinic's subscription approval status.");
+  const WHATSAPP_MESSAGE = encodeURIComponent("Hello My Clinic Support, I'm checking on my clinic's subscription approval status.");
   const WHATSAPP_URL = `https://wa.me/${SUPPORT_NUMBER}?text=${WHATSAPP_MESSAGE}`;
 
   const checkStatus = async () => {

@@ -29,7 +29,7 @@ const ClinicalSidebar = () => {
     <div className="flex flex-col h-full p-6 bg-slate-900/30">
       <div className="flex items-center gap-3 mb-10 px-2">
         <Stethoscope className="text-orange-600" size={32} />
-        <span className="text-xl font-black tracking-tighter text-white">CLINIC POS</span>
+        <span className="text-xl font-black tracking-tighter text-white">MY CLINIC</span>
       </div>
 
       <nav className="flex-1 space-y-2">

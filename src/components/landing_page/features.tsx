@@ -12,7 +12,7 @@ const Features: React.FC = () => {
             Every tool you need to run <br className="hidden lg:block"/> a world-class clinic.
           </h2>
           <p className="text-slate-400 text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
-            We've built DentFlow from the ground up specifically for modern practitioners who value efficiency, security, and growth.
+            We've built My Clinic from the ground up specifically for modern practitioners who value efficiency, security, and growth.
           </p>
         </div>
 

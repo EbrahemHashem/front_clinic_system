@@ -13,6 +13,13 @@ import {
 import { useRouter } from "next/navigation";
 import { API_CONFIG } from "../lib/constants";
 
+const egpFormatter = new Intl.NumberFormat("en-EG", {
+  style: "currency",
+  currency: "EGP",
+  currencyDisplay: "narrowSymbol",
+  maximumFractionDigits: 0,
+});
+
 const PlanSelection = () => {
   const router = useRouter();
   const [isYearly, setIsYearly] = useState(false);
@@ -185,7 +192,7 @@ const PlanSelection = () => {
               <div className="mb-8">
                 <div className="flex items-baseline gap-1">
                   <span className="text-5xl font-black text-white">
-                    ${parseInt(price)}
+                    {egpFormatter.format(parseFloat(price))}
                   </span>
                   <span className="text-slate-500 font-bold">
                     {isFree ? "/14 days" : isYearly ? "/yr" : "/mo"}
@@ -198,7 +205,7 @@ const PlanSelection = () => {
                 ) : (
                   isYearly && (
                     <p className="text-orange-500 text-xs font-bold mt-2">
-                      Billed annually (${plan.price_monthly}/mo)
+                      Billed annually ({egpFormatter.format(parseFloat(plan.price_monthly))}/mo)
                     </p>
                   )
                 )}

@@ -90,7 +90,7 @@ const ClinicForm = () => {
             <input
               required
               className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 text-white placeholder:text-slate-700 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all"
-              placeholder="e.g. DentFlow Dental Center"
+              placeholder="e.g. My Clinic Dental Center"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
             />
