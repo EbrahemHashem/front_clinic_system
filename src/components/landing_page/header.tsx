@@ -17,18 +17,18 @@ const Header = () => {
           <div className="flex-1 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-xs font-bold mb-8 border border-orange-500/20">
               <ShieldCheck className="w-4 h-4" />
-              HIPAA Compliant & Secure Data Management
+              Secure Cloud Clinic Management
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-black leading-[1.05] mb-6 tracking-tight text-white">
-              Precision Care,
+              Better Care,
               <br />
-              <span className="text-orange-500">Simpler</span> Operations.
+              <span className="text-orange-500">Smarter</span> Operations.
             </h1>
 
             <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto lg:mx-0">
-              My Clinic is the all-in-one clinical platform designed to optimize
-              every touchpoint of your practice.
+              My Clinic helps you run appointments, patient records, billing,
+              staff, and daily workflows from one connected platform.
             </p>
 
             {/* CTA */}
@@ -37,7 +37,7 @@ const Header = () => {
                 href="/register"
                 className="w-full sm:w-auto bg-orange-600 text-white px-8 py-5 rounded-2xl font-black text-lg hover:bg-orange-500 transition-all shadow-2xl shadow-orange-900/30"
               >
-                Start Free Trial
+                Start Managing Now
               </Link>
 
               <button className="w-full sm:w-auto bg-slate-900 border border-slate-800 text-white px-8 py-5 rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
@@ -50,11 +50,11 @@ const Header = () => {
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-slate-500 font-medium">
               <div className="flex items-center gap-1.5">
                 <CheckCircle className="w-4 h-4 text-orange-500" />
-                No credit card required
+                Setup in minutes
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle className="w-4 h-4 text-orange-500" />
-                14-day full access
+                Built for clinics of all sizes
               </div>
             </div>
           </div>

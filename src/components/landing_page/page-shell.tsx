@@ -33,10 +33,10 @@ export default function PageShell({
           <section className="py-24 relative overflow-hidden bg-slate-900 border-y border-slate-800">
             <div className="container mx-auto px-6 text-center">
               <h2 className="text-4xl md:text-6xl font-black mb-8">
-                Ready to modernize your clinical workflow?
+                Ready to run your clinic with less effort?
               </h2>
               <p className="text-slate-400 text-lg mb-12 max-w-2xl mx-auto">
-                Join thousands of providers using My Clinic.
+                Join clinics using My Clinic to simplify appointments, records, billing, and team workflows.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button

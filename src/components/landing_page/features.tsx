@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Calendar, FileText, Wallet, MessageSquare, Shield, RefreshCw, Package, Headphones } from 'lucide-react';
+import Image from 'next/image';
+import { Calendar, FileText, Wallet, Shield, Users, Stethoscope, ScrollText, Building2 } from 'lucide-react';
 
 const Features: React.FC = () => {
   return (
@@ -9,10 +10,10 @@ const Features: React.FC = () => {
         <div className="text-center max-w-4xl mx-auto mb-24">
           <span className="text-orange-500 font-bold tracking-widest uppercase text-xs mb-4 block">Platform Excellence</span>
           <h2 className="text-4xl lg:text-5xl font-black tracking-tight mb-6 text-white leading-tight">
-            Every tool you need to run <br className="hidden lg:block"/> a world-class clinic.
+            Everything you need to run <br className="hidden lg:block"/> your clinic in one place.
           </h2>
           <p className="text-slate-400 text-lg lg:text-xl leading-relaxed max-w-3xl mx-auto">
-            We've built My Clinic from the ground up specifically for modern practitioners who value efficiency, security, and growth.
+            My Clinic is built for front-desk teams, doctors, and clinic managers who need fast, reliable, and organized operations.
           </p>
         </div>
 
@@ -24,12 +25,12 @@ const Features: React.FC = () => {
               <div className="w-14 h-14 bg-orange-500/10 text-orange-500 rounded-2xl flex items-center justify-center mb-6 border border-orange-500/20">
                 <Calendar className="w-7 h-7" />
               </div>
-              <h3 className="text-3xl font-black mb-6 text-white tracking-tight">AI-Assisted Scheduling</h3>
+              <h3 className="text-3xl font-black mb-6 text-white tracking-tight">Smart Appointment Management</h3>
               <p className="text-slate-400 text-lg leading-relaxed mb-8">
-                Eliminate gaps and double-bookings. Our smart calendar predicts peak times and automates patient reminders to reduce no-shows by up to 45%.
+                Create, edit, and track appointments quickly with a clean workflow that helps your team manage daily clinic operations without confusion.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {["Smart Conflict Detection", "Two-way SMS Reminders", "Patient Self-Scheduling", "Multi-Chair Support"].map((item, i) => (
+                {["Create & edit appointments", "Daily appointment list", "Clear visit details", "Fast status updates"].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-slate-300 font-semibold text-sm">
                     <div className="w-5 h-5 bg-orange-500/20 text-orange-500 rounded-full flex items-center justify-center">
                       <Shield className="w-3 h-3" />
@@ -43,9 +44,11 @@ const Features: React.FC = () => {
               <div className="relative group">
                 <div className="absolute -inset-4 bg-orange-600/20 rounded-[2.5rem] blur-3xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
                 <div className="relative bg-slate-900 p-3 rounded-[2rem] border border-slate-800 shadow-2xl">
-                  <img 
+                  <Image 
                     src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&h=500&auto=format&fit=crop" 
-                    alt="Scheduling Dashboard" 
+                    alt="Scheduling Dashboard"
+                    width={800}
+                    height={500}
                     className="rounded-2xl w-full object-cover opacity-80" 
                   />
                 </div>
@@ -59,12 +62,12 @@ const Features: React.FC = () => {
               <div className="w-14 h-14 bg-orange-500/10 text-orange-400 rounded-2xl flex items-center justify-center mb-6 border border-orange-500/20">
                 <FileText className="w-7 h-7" />
               </div>
-              <h3 className="text-3xl font-black mb-6 text-white tracking-tight">Interactive Patient Charts</h3>
+              <h3 className="text-3xl font-black mb-6 text-white tracking-tight">Unified Patient Records</h3>
               <p className="text-slate-400 text-lg leading-relaxed mb-8">
-                Go completely paperless with high-definition digital charts. Annotate directly on x-rays, track clinical notes, and manage treatment plans in seconds.
+                Store patient data in one profile with attachments and treatment details so doctors and assistants can access the right information instantly.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {["E-Forms & Consents", "Voice-to-Text Notes", "HD Image Integration", "Treatment Estimator"].map((item, i) => (
+                {["Patient profiles", "Attachment uploads", "Treatment plan tracking", "History and notes"].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-slate-300 font-semibold text-sm">
                     <div className="w-5 h-5 bg-orange-500/20 text-orange-400 rounded-full flex items-center justify-center">
                       <Shield className="w-3 h-3" />
@@ -78,9 +81,11 @@ const Features: React.FC = () => {
               <div className="relative group">
                 <div className="absolute -inset-4 bg-orange-600/20 rounded-[2.5rem] blur-3xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
                 <div className="relative bg-slate-900 p-3 rounded-[2rem] border border-slate-800 shadow-2xl">
-                  <img 
+                  <Image 
                     src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&h=500&auto=format&fit=crop" 
-                    alt="Digital Records" 
+                    alt="Digital Records"
+                    width={800}
+                    height={500}
                     className="rounded-2xl w-full object-cover opacity-80" 
                   />
                 </div>
@@ -92,12 +97,12 @@ const Features: React.FC = () => {
         {/* Feature Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
-            { icon: <Wallet className="w-6 h-6" />, title: "Automated Billing", desc: "Process payments and insurance claims automatically with 98% accuracy.", color: "bg-orange-500/10 text-orange-500" },
-            { icon: <MessageSquare className="w-6 h-6" />, title: "Patient Portals", desc: "Allow patients to view history, pay bills, and message you directly.", color: "bg-orange-500/10 text-orange-400" },
-            { icon: <Shield className="w-6 h-6" />, title: "HIPAA Compliant", desc: "Bank-grade encryption and secure backups for absolute data safety.", color: "bg-orange-500/10 text-orange-500" },
-            { icon: <RefreshCw className="w-6 h-6" />, title: "Seamless Migration", desc: "We transfer your data from any system at no extra cost.", color: "bg-orange-500/10 text-orange-400" },
-            { icon: <Package className="w-6 h-6" />, title: "Inventory Tracker", desc: "Never run out of clinical supplies with smart low-stock alerts.", color: "bg-orange-500/10 text-orange-500" },
-            { icon: <Headphones className="w-6 h-6" />, title: "Concierge Support", desc: "24/7 dedicated assistance to ensure your clinic never stops.", color: "bg-orange-500/10 text-orange-400" }
+            { icon: <Stethoscope className="w-6 h-6" />, title: "Doctor Management", desc: "Add and manage doctors, salaries, specialties, and clinic assignments.", color: "bg-orange-500/10 text-orange-500" },
+            { icon: <Users className="w-6 h-6" />, title: "Assistant Management", desc: "Manage assistant accounts and keep staff structure organized by role.", color: "bg-orange-500/10 text-orange-400" },
+            { icon: <ScrollText className="w-6 h-6" />, title: "Services Catalog", desc: "Create and update clinic services with pricing for accurate operations.", color: "bg-orange-500/10 text-orange-500" },
+            { icon: <Wallet className="w-6 h-6" />, title: "Subscription Plans", desc: "Choose, upgrade, and monitor clinic subscription plans and status.", color: "bg-orange-500/10 text-orange-400" },
+            { icon: <Building2 className="w-6 h-6" />, title: "Clinic Control", desc: "Super admin can view clinics and enable or disable access when needed.", color: "bg-orange-500/10 text-orange-500" },
+            { icon: <Shield className="w-6 h-6" />, title: "Role-Based Access", desc: "Separate views and permissions for super admin, owner, doctor, and assistant.", color: "bg-orange-500/10 text-orange-400" }
           ].map((item, i) => (
             <div key={i} className="p-10 bg-slate-900 rounded-3xl border border-slate-800 hover:border-orange-500/50 hover:bg-slate-800/50 transition-all duration-300 group shadow-lg">
               <div className={`w-12 h-12 ${item.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-orange-500/10`}>

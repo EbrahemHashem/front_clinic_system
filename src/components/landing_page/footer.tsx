@@ -46,13 +46,13 @@ const Footer: React.FC = () => {
           </div>
         </div>
         
-        <div className="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+        {/* <div className="pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-slate-500">© 2024 My Clinic. All rights reserved.</p>
           <div className="flex gap-8 text-xs text-slate-500">
             <a href="#" className="hover:text-slate-300">Privacy Policy</a>
             <a href="#" className="hover:text-slate-300">Terms of Service</a>
           </div>
-        </div>
+        </div> */}
       </div>
     </footer>
   );

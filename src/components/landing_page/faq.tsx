@@ -39,24 +39,24 @@ const FAQItem = ({ question, answer }: { question: string, answer: string, key?:
 const FAQ: React.FC = () => {
   const faqs = [
     {
-      question: "Is My Clinic HIPAA compliant?",
-      answer: "Yes, absolutely. My Clinic is fully HIPAA compliant. We use bank-grade AES-256 encryption for all data at rest and TLS 1.3 for data in transit. We also sign Business Associate Agreements (BAAs) with all our covered entity clients."
+      question: "Is My Clinic secure for clinic data?",
+      answer: "Yes. My Clinic uses encrypted data storage, secure transport, and role-based permissions to protect patient and operational data."
     },
     {
       question: "How long does it take to migrate my current data?",
-      answer: "Most migrations take between 2 to 5 business days. Our dedicated migration team handles everything from patient records to clinical charts and billing history. We support imports from all major legacy dental software."
+      answer: "Most migrations take 2 to 5 business days depending on data size. We help migrate patients, appointments, billing records, and team data."
     },
     {
       question: "Can I use My Clinic on my tablet or mobile device?",
-      answer: "Yes, My Clinic is a cloud-native platform. It works seamlessly on iPads, Android tablets, and smartphones via any modern web browser, allowing you to manage your clinic from anywhere."
+      answer: "Yes. My Clinic works on desktop, tablet, and mobile browsers so your team can manage clinic operations from anywhere."
     },
     {
       question: "Do you offer multi-location support?",
-      answer: "Yes, our Enterprise plan is designed specifically for multi-location dental networks. It provides centralized reporting, shared patient records, and location-specific billing settings."
+      answer: "Yes. Enterprise plans support multiple branches with centralized reporting, branch-level controls, and consolidated management."
     },
     {
       question: "What kind of support do you provide?",
-      answer: "All plans include 24/7 email support. Our Professional and Enterprise plans include priority phone and live chat support with a dedicated customer success manager."
+      answer: "All plans include ongoing support. Professional and Enterprise plans include faster response times and priority support channels."
     }
   ];
 
@@ -65,7 +65,7 @@ const FAQ: React.FC = () => {
       <div className="container mx-auto px-6 max-w-4xl">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-black text-white mb-4">Frequently Asked Questions</h2>
-          <p className="text-slate-400">Everything you need to know about the platform and our clinical tools.</p>
+          <p className="text-slate-400">Everything you need to know about using My Clinic for daily clinic management.</p>
         </div>
         <div className="bg-slate-900/50 rounded-[2.5rem] border border-slate-800 p-8 md:p-12 shadow-2xl">
           {faqs.map((faq, index) => (

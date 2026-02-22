@@ -19,7 +19,7 @@ const Pricing: React.FC = () => {
       name: "Basic",
       price: billingCycle === 'monthly' ? "149" : "119",
       period: "/ month",
-      desc: "For solo practitioners just starting out.",
+      desc: "For small clinics getting started with digital operations.",
       cta: "Get Started",
       features: ["Up to 1,000 Patients", "Smart Scheduling", "Digital Charts (EMR)", "Billing & Invoicing", "Email Support"],
       highlight: false
@@ -28,7 +28,7 @@ const Pricing: React.FC = () => {
       name: "Professional",
       price: billingCycle === 'monthly' ? "299" : "239",
       period: "/ month",
-      desc: "Perfect for growing dental clinics.",
+      desc: "For growing clinics with higher patient volume and bigger teams.",
       cta: "Try for Free",
       badge: "Popular Choice",
       features: ["Unlimited Patients", "SMS Reminders", "Growth Analytics", "Insurance Claims Tool", "Priority Support", "E-Signatures"],
@@ -38,7 +38,7 @@ const Pricing: React.FC = () => {
       name: "Enterprise",
       price: "Custom",
       period: "",
-      desc: "For multi-location dental networks.",
+      desc: "For multi-branch clinic groups with advanced operational needs.",
       cta: "Contact Sales",
       features: ["Multi-location Management", "API Access", "Custom Integration", "Dedicated Account Manager", "Advanced Security Controls"],
       highlight: false
@@ -49,8 +49,8 @@ const Pricing: React.FC = () => {
     <section id="pricing" className="py-24 bg-slate-950">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight">Simple, Growth-First Pricing</h2>
-          <p className="text-slate-400 text-lg mb-10">Choose the plan that fits your practice today and scales with you tomorrow.</p>
+          <h2 className="text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight">Simple Pricing For Clinic Teams</h2>
+          <p className="text-slate-400 text-lg mb-10">Choose a plan based on your clinic size and upgrade as your operations grow.</p>
           
           {/* Toggle */}
           <div className="flex items-center justify-center gap-4 bg-slate-900 p-1.5 rounded-full border border-slate-800 w-fit mx-auto shadow-inner">
@@ -94,7 +94,7 @@ const Pricing: React.FC = () => {
               </button>
 
               <div className="space-y-4 flex-grow">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">What's included:</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">What is included:</p>
                 {plan.features.map((feat, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />

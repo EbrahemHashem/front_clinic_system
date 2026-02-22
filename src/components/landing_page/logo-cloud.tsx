@@ -3,33 +3,21 @@
 import React from 'react';
 
 const LogoCloud: React.FC = () => {
-  const logos = [
-    { name: 'SmileDental', label: 'SmileDental' },
-    { name: 'CityClinic', label: 'CityClinic' },
-    { name: 'HealthFirst', label: 'HealthFirst' },
-    { name: 'BrightSide', label: 'BrightSide' },
-    { name: 'ApexCare', label: 'ApexCare' },
-  ];
-
   return (
     <section id ="logo-cloud" className="py-12 bg-slate-950 border-y border-slate-900/50">
       <div className="container mx-auto px-6">
-        <p className="text-center text-xs font-black uppercase tracking-[0.3em] text-slate-500 mb-10">
-          Trusted by 500+ clinics worldwide
-        </p>
-
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-          {logos.map((logo) => (
-            <div
-              key={logo.name}
-              className="flex items-center gap-2 group cursor-default"
-            >
-              <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center font-black text-slate-400 group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                {logo.label[0]}
-              </div>
-              <span className="text-xl font-bold tracking-tight text-slate-400 group-hover:text-white transition-colors">
-                {logo.label}
-              </span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { value: "200+", label: "Clinics Managed" },
+            { value: "1M+", label: "Appointments Tracked" },
+            { value: "99.9%", label: "Platform Uptime" },
+            { value: "24/7", label: "Support Availability" },
+          ].map((item) => (
+            <div key={item.label} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+              <p className="text-2xl md:text-3xl font-black text-white">{item.value}</p>
+              <p className="text-xs uppercase tracking-widest text-slate-500 font-bold mt-2">
+                {item.label}
+              </p>
             </div>
           ))}
         </div>
