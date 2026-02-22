@@ -4,22 +4,17 @@ import React, { useEffect, useState } from "react";
 import {
   Building2,
   Users,
-  UserRound,
   DollarSign,
   Activity,
   TrendingUp,
   TrendingDown,
   ArrowUpRight,
-  Clock,
   CheckCircle2,
   XCircle,
-  AlertCircle,
   Loader2,
   Stethoscope,
 } from "lucide-react";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -79,22 +74,38 @@ const pendingApprovals = [
   {
     name: "Sunrise Dental Clinic",
     plan: "Advanced Plan",
-    amount: "$299/mo",
+    amount: 299,
+    cycle: "mo",
     date: "2026-02-21",
   },
   {
     name: "Pearl White Dentistry",
     plan: "Starter Plan",
-    amount: "$99/mo",
+    amount: 99,
+    cycle: "mo",
     date: "2026-02-20",
   },
   {
     name: "SmileFirst Clinic",
     plan: "Advanced Plan",
-    amount: "$299/mo",
+    amount: 299,
+    cycle: "mo",
     date: "2026-02-19",
   },
 ];
+
+const currencyFormatter = new Intl.NumberFormat("en-EG", {
+  style: "currency",
+  currency: "EGP",
+  currencyDisplay: "narrowSymbol",
+  maximumFractionDigits: 0,
+});
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "2-digit",
+  year: "numeric",
+});
 
 const SuperAdminView = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -167,7 +178,7 @@ const SuperAdminView = () => {
           },
           {
             label: "Monthly Revenue",
-            value: "$85,230",
+            value: currencyFormatter.format(85230),
             change: "+12.3%",
             up: true,
             icon: DollarSign,
@@ -214,7 +225,9 @@ const SuperAdminView = () => {
             <div>
               <h3 className="text-lg font-bold text-white">Monthly Revenue</h3>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-3xl font-black text-white">$523,890</span>
+                <span className="text-3xl font-black text-white">
+                  {currencyFormatter.format(523890)}
+                </span>
                 <span className="text-xs font-bold text-green-500 flex items-center gap-1">
                   <TrendingUp size={12} /> +12.3%
                 </span>
@@ -254,7 +267,7 @@ const SuperAdminView = () => {
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(v) => `$${v / 1000}k`}
+                  tickFormatter={(value) => `${Math.round(Number(value) / 1000)}k EGP`}
                 />
                 <Tooltip
                   contentStyle={{
@@ -265,8 +278,8 @@ const SuperAdminView = () => {
                   }}
                   labelStyle={{ color: "#94a3b8", fontWeight: 700 }}
                   itemStyle={{ color: "#ea580c", fontWeight: 700 }}
-                  formatter={(value: number) => [
-                    `$${value.toLocaleString()}`,
+                  formatter={(value) => [
+                    currencyFormatter.format(Number(value)),
                     "Revenue",
                   ]}
                 />
@@ -378,7 +391,7 @@ const SuperAdminView = () => {
                       {clinic.name}
                     </p>
                     <p className="text-slate-500 text-xs">
-                      {clinic.plan} • {clinic.amount}
+                      {clinic.plan} • {currencyFormatter.format(clinic.amount)}/{clinic.cycle}
                     </p>
                   </div>
                 </div>
@@ -449,7 +462,7 @@ const SuperAdminView = () => {
                       </span>
                     </td>
                     <td className="py-4 text-sm text-slate-500">
-                      {ticket.date}
+                      {dateFormatter.format(new Date(ticket.date))}
                     </td>
                   </tr>
                 ))}
