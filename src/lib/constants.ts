@@ -20,6 +20,8 @@ export const API_CONFIG = {
     SERVICES: "services/",
     // Super Admin Endpoints
     CLINICS_ALL: "clinics/all/",
+    SUBSCRIPTION_PLANS: "subscription/",
+    SUBSCRIPTION_REQUESTS: "subscription/requests/",
     ADMIN_CLINICS: "admin/clinics/",
     ADMIN_USERS: "admin/users/",
     ADMIN_SUBSCRIPTIONS: "admin/subscriptions/",
