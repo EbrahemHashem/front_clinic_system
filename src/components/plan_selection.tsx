@@ -20,13 +20,24 @@ const egpFormatter = new Intl.NumberFormat("en-EG", {
   maximumFractionDigits: 0,
 });
 
+interface Plan {
+  id: string;
+  name: string;
+  description: string;
+  price_monthly: string;
+  price_yearly: string;
+  max_doctors: number;
+  max_assistants: number;
+  max_patients: number;
+}
+
 const PlanSelection = () => {
   const router = useRouter();
   const [isYearly, setIsYearly] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [availablePlans, setAvailablePlans] = useState<any[]>([]);
+  const [availablePlans, setAvailablePlans] = useState<Plan[]>([]);
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -50,15 +61,19 @@ const PlanSelection = () => {
         );
 
         if (!response.ok) throw new Error("Failed to load subscription plans");
-        const data = await response.json();
+        const data: unknown = await response.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Unexpected plans response format.");
+        }
 
         const sortedPlans = data.sort(
-          (a: any, b: any) =>
-            parseFloat(a.price_monthly) - parseFloat(b.price_monthly),
-        );
+          (a, b) =>
+            parseFloat(String((a as Plan).price_monthly)) -
+            parseFloat(String((b as Plan).price_monthly)),
+        ) as Plan[];
         setAvailablePlans(sortedPlans);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to load plans.");
       } finally {
         setIsLoading(false);
       }
@@ -114,8 +129,8 @@ const PlanSelection = () => {
 
       // Redirect to waiting state — admin must activate subscription
       router.push("/waiting-state");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to activate plan.");
       setIsSubmitting(null);
     }
   };

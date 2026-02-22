@@ -111,8 +111,10 @@ export default function SubscriptionManagement() {
       if (parsed.user?.clinic?.subscription) {
         setCurrentSubscription(parsed.user.clinic.subscription);
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "Failed to load subscription data",
+      );
     } finally {
       setIsLoading(false);
     }

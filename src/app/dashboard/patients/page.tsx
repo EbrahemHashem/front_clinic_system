@@ -22,6 +22,25 @@ export interface StaffDropdown {
   name: string;
 }
 
+export interface PatientFormData {
+  name: string;
+  gender: string;
+  phone_number: string;
+  birth_date: string;
+  doctor_id: string;
+  assistant_id: string;
+}
+
+interface StaffApiItem {
+  id: string;
+  specialty?: string;
+  user?: {
+    first_name?: string;
+    last_name?: string;
+    phone_number?: string;
+  };
+}
+
 const PatientsPage = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [doctors, setDoctors] = useState<StaffDropdown[]>([]);
@@ -36,7 +55,7 @@ const PatientsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PatientFormData>({
     name: "",
     gender: "male",
     phone_number: "",
@@ -77,18 +96,18 @@ const PatientsPage = () => {
       }
       
       if (Array.isArray(docData)) {
-        setDoctors(docData.map((d: any) => ({ 
+        setDoctors(docData.map((d: StaffApiItem) => ({ 
           id: d.id, 
-          name: `${d.user.first_name} ${d.user.last_name}`,
-          label: `Dr. ${d.user.first_name} ${d.user.last_name} ${d.specialty ? `(${d.specialty})` : ''}` 
+          name: `${d.user?.first_name || ""} ${d.user?.last_name || ""}`.trim(),
+          label: `Dr. ${`${d.user?.first_name || ""} ${d.user?.last_name || ""}`.trim()} ${d.specialty ? `(${d.specialty})` : ''}` 
         })));
       }
       
       if (Array.isArray(assData)) {
-        setAssistants(assData.map((a: any) => ({ 
+        setAssistants(assData.map((a: StaffApiItem) => ({ 
           id: a.id, 
-          name: `${a.user.first_name} ${a.user.last_name}`,
-          label: `${a.user.first_name} ${a.user.last_name} - ${a.user.phone_number}` 
+          name: `${a.user?.first_name || ""} ${a.user?.last_name || ""}`.trim(),
+          label: `${`${a.user?.first_name || ""} ${a.user?.last_name || ""}`.trim()} - ${a.user?.phone_number || ""}` 
         })));
       }
     } catch (err) {
@@ -109,11 +128,19 @@ const PatientsPage = () => {
     setIsSubmitting(true);
     try {
       const auth = JSON.parse(localStorage.getItem("dentflow_auth") || "{}");
-      const payload: any = { ...formData };
+      const payload: {
+        name: string;
+        gender: string;
+        phone_number: string;
+        birth_date: string;
+        doctor_id: string;
+        assistant_id?: string;
+        patient_id?: string;
+      } = { ...formData };
       if (!payload.assistant_id) delete payload.assistant_id;
 
-      let url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PATIENTS}`;
-      let method = editingId ? "PUT" : "POST";
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PATIENTS}`;
+      const method = editingId ? "PUT" : "POST";
       if (editingId) payload.patient_id = editingId;
 
       const res = await fetch(url, {

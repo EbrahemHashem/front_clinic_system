@@ -105,8 +105,8 @@ export default function UpgradePlanModal({
       }
 
       router.push("/waiting-state");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to change plan.");
       setIsSubmitting(false);
     }
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Clock, RefreshCw, LogOut, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { API_CONFIG } from '../lib/constants';
@@ -13,7 +13,7 @@ const WaitingState = () => {
   const WHATSAPP_MESSAGE = encodeURIComponent("Hello My Clinic Support, I'm checking on my clinic's subscription approval status.");
   const WHATSAPP_URL = `https://wa.me/${SUPPORT_NUMBER}?text=${WHATSAPP_MESSAGE}`;
 
-  const checkStatus = async () => {
+  const checkStatus = useCallback(async () => {
     setLastChecked(new Date().toLocaleTimeString());
     try {
       const authData = JSON.parse(localStorage.getItem('dentflow_auth') || '{}');
@@ -47,15 +47,22 @@ const WaitingState = () => {
     } catch (err) {
       console.error("Polling error", err);
     }
-  };
+  }, [router]);
 
   useEffect(() => {
-    // Run immediately on mount
-    checkStatus();
+    const timer = setTimeout(() => {
+      void checkStatus();
+    }, 0);
 
-    const interval = setInterval(checkStatus, 20000); // Auto-check every 20s
-    return () => clearInterval(interval);
-  }, []);
+    const interval = setInterval(() => {
+      void checkStatus();
+    }, 20000); // Auto-check every 20s
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [checkStatus]);
 
   return (
     <div className="w-full max-w-md bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-10 rounded-[2.5rem] text-center shadow-2xl relative z-10 mx-auto">

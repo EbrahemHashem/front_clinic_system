@@ -58,7 +58,7 @@ export function EditServiceModal({ serviceId, isOpen, onClose, onSuccess }: Edit
     try {
       const auth = JSON.parse(localStorage.getItem("dentflow_auth") || "{}");
       
-      const payload: any = { id: serviceId };
+      const payload: Record<string, string | number | null> = { id: serviceId };
       if (formData.name) payload.name = formData.name;
       if (formData.description) payload.description = formData.description;
       if (formData.price) payload.price = parseFloat(formData.price);

@@ -44,8 +44,8 @@ interface Clinic {
   phone_number: string;
   disabled: boolean;
   owner: ClinicOwner | null;
-  doctors?: StaffMember[];
-  assistants?: StaffMember[];
+  doctors?: Array<StaffMember | string>;
+  assistants?: Array<StaffMember | string>;
 }
 
 type DetailsSection = "owner" | "doctors" | "assistants";
@@ -166,29 +166,48 @@ const ClinicsPage = () => {
     }
   };
 
-  const getStaffName = (staff: StaffMember) => {
-    if (typeof staff.user === "string") {
-      return `User ${staff.user.slice(0, 8)}`;
+  const asStaffMember = (staff: StaffMember | string): StaffMember =>
+    typeof staff === "string" ? { user: staff } : staff;
+
+  const getStaffName = (staff: StaffMember | string) => {
+    const member = asStaffMember(staff);
+    if (typeof member.user === "string") {
+      return `User ${member.user.slice(0, 8)}`;
     }
-    const firstName = staff.first_name || staff.user?.first_name || "";
-    const lastName = staff.last_name || staff.user?.last_name || "";
+    const firstName = member.first_name || member.user?.first_name || "";
+    const lastName = member.last_name || member.user?.last_name || "";
     const fullName = `${firstName} ${lastName}`.trim();
     return fullName || "Unknown";
   };
 
-  const getStaffEmail = (staff: StaffMember) => {
-    if (typeof staff.user === "string") return "-";
-    return staff.email || staff.user?.email || "-";
+  const getStaffEmail = (staff: StaffMember | string) => {
+    const member = asStaffMember(staff);
+    if (typeof member.user === "string") return "-";
+    return member.email || member.user?.email || "-";
   };
 
-  const getStaffPhone = (staff: StaffMember) => {
-    if (typeof staff.user === "string") return "-";
-    return staff.phone_number || staff.user?.phone_number || "-";
+  const getStaffPhone = (staff: StaffMember | string) => {
+    const member = asStaffMember(staff);
+    if (typeof member.user === "string") return "-";
+    return member.phone_number || member.user?.phone_number || "-";
   };
 
-  const getStaffUserId = (staff: StaffMember) => {
-    if (typeof staff.user === "string") return staff.user;
-    return staff.user?.id || "-";
+  const getStaffUserId = (staff: StaffMember | string) => {
+    const member = asStaffMember(staff);
+    if (typeof member.user === "string") return member.user;
+    return member.user?.id || "-";
+  };
+
+  const getStaffKey = (
+    staff: StaffMember | string,
+    prefix: string,
+    index: number,
+  ) => {
+    const member = asStaffMember(staff);
+    if (member.id) return member.id;
+    if (typeof member.user === "string") return member.user;
+    if (member.user?.id) return member.user.id;
+    return `${prefix}-${index}`;
   };
 
   return (
@@ -393,48 +412,51 @@ const ClinicsPage = () => {
                       {(selectedClinicDetails?.doctors?.length ?? 0) === 0 ? (
                         <p className="text-slate-500">No doctors found for this clinic.</p>
                       ) : (
-                        selectedClinicDetails?.doctors?.map((doctor, index) => (
-                          <div
-                            key={doctor.id || doctor.user?.id || `doctor-${index}`}
-                            className="bg-slate-950 border border-slate-800 rounded-2xl p-4"
-                          >
-                            <p className="text-white font-bold">{getStaffName(doctor)}</p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Doctor ID: </span>
-                                {doctor.id || "-"}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">User ID: </span>
-                                {getStaffUserId(doctor)}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Salary: </span>
-                                {doctor.salary || "-"}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Commission: </span>
-                                {doctor.percentage || "-"}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Status: </span>
-                                {doctor.disabled ? "Disabled" : "Active"}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Specialty: </span>
-                                {doctor.specialty || "-"}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Email: </span>
-                                {getStaffEmail(doctor)}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Phone: </span>
-                                {getStaffPhone(doctor)}
-                              </p>
+                        selectedClinicDetails?.doctors?.map((doctor, index) => {
+                          const doctorMember = asStaffMember(doctor);
+                          return (
+                            <div
+                              key={getStaffKey(doctor, "doctor", index)}
+                              className="bg-slate-950 border border-slate-800 rounded-2xl p-4"
+                            >
+                              <p className="text-white font-bold">{getStaffName(doctor)}</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Doctor ID: </span>
+                                  {doctorMember.id || "-"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">User ID: </span>
+                                  {getStaffUserId(doctor)}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Salary: </span>
+                                  {doctorMember.salary || "-"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Commission: </span>
+                                  {doctorMember.percentage || "-"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Status: </span>
+                                  {doctorMember.disabled ? "Disabled" : "Active"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Specialty: </span>
+                                  {doctorMember.specialty || "-"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Email: </span>
+                                  {getStaffEmail(doctor)}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Phone: </span>
+                                  {getStaffPhone(doctor)}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          );
+                        })
                       )}
                     </div>
                   )}
@@ -446,42 +468,45 @@ const ClinicsPage = () => {
                           No assistants found for this clinic.
                         </p>
                       ) : (
-                        selectedClinicDetails?.assistants?.map((assistant, index) => (
-                          <div
-                            key={assistant.id || assistant.user?.id || `assistant-${index}`}
-                            className="bg-slate-950 border border-slate-800 rounded-2xl p-4"
-                          >
-                            <p className="text-white font-bold">
-                              {getStaffName(assistant)}
-                            </p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Assistant ID: </span>
-                                {assistant.id || "-"}
+                        selectedClinicDetails?.assistants?.map((assistant, index) => {
+                          const assistantMember = asStaffMember(assistant);
+                          return (
+                            <div
+                              key={getStaffKey(assistant, "assistant", index)}
+                              className="bg-slate-950 border border-slate-800 rounded-2xl p-4"
+                            >
+                              <p className="text-white font-bold">
+                                {getStaffName(assistant)}
                               </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">User ID: </span>
-                                {getStaffUserId(assistant)}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Salary: </span>
-                                {assistant.salary || "-"}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Status: </span>
-                                {assistant.disabled ? "Disabled" : "Active"}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Email: </span>
-                                {getStaffEmail(assistant)}
-                              </p>
-                              <p className="text-slate-400">
-                                <span className="text-slate-500">Phone: </span>
-                                {getStaffPhone(assistant)}
-                              </p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Assistant ID: </span>
+                                  {assistantMember.id || "-"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">User ID: </span>
+                                  {getStaffUserId(assistant)}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Salary: </span>
+                                  {assistantMember.salary || "-"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Status: </span>
+                                  {assistantMember.disabled ? "Disabled" : "Active"}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Email: </span>
+                                  {getStaffEmail(assistant)}
+                                </p>
+                                <p className="text-slate-400">
+                                  <span className="text-slate-500">Phone: </span>
+                                  {getStaffPhone(assistant)}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        ))
+                          );
+                        })
                       )}
                     </div>
                   )}

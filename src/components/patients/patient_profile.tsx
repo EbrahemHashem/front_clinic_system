@@ -5,15 +5,42 @@ import { useParams, useRouter } from "next/navigation";
 import { API_CONFIG } from "@/lib/constants";
 import { 
   ArrowLeft, FileText, CheckCircle2, Clock, 
-  Plus, MoreVertical, Loader2, Upload, Trash2, X
+  Plus, Loader2, Upload, Trash2, X
 } from "lucide-react";
+
+interface PatientAttachment {
+  id: string;
+  file: string;
+  created_at: string;
+}
+
+interface TreatmentPlan {
+  id: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  completed: boolean;
+}
+
+interface PatientProfileData {
+  id: string;
+  name: string;
+  gender?: string;
+  birth_date?: string;
+  phone_number?: string;
+  doctor?: string;
+  assistant?: string;
+  clinic?: string;
+  attachments?: PatientAttachment[];
+  treatment_plans?: TreatmentPlan[];
+}
 
 export default function PatientProfile() {
   const { id } = useParams();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<PatientProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -156,7 +183,7 @@ export default function PatientProfile() {
             </div>
 
             <div className="space-y-3">
-              {data.attachments?.map((file: any) => (
+              {data.attachments?.map((file: PatientAttachment) => (
                 <div key={file.id} className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-slate-950/50 rounded-2xl border border-slate-800 hover:border-orange-500/30 transition-all group">
                   <div className="p-2 bg-slate-800 text-orange-500 rounded-lg shrink-0">
                     <FileText className="w-4 h-4 md:w-[18px] md:h-[18px]" />
@@ -197,7 +224,7 @@ export default function PatientProfile() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
-                  {data.treatment_plans?.map((plan: any) => (
+                  {data.treatment_plans?.map((plan: TreatmentPlan) => (
                     <tr key={plan.id} className="hover:bg-slate-800/20 transition-colors">
                       <td className="px-6 md:px-8 py-6">
                         <p className="text-white font-bold text-sm md:text-base">{plan.description}</p>
@@ -224,7 +251,7 @@ export default function PatientProfile() {
   );
 }
 
-function DetailItem({ label, value }: { label: string, value: string }) {
+function DetailItem({ label, value }: { label: string; value?: string }) {
   return (
     <div className="flex items-center justify-between py-1 border-b border-slate-800/30 last:border-0 pb-3">
       <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">{label}</span>

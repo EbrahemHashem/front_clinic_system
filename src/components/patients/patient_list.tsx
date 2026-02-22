@@ -6,7 +6,7 @@ import {
   Users, Plus, Search, Edit3, Trash2, X, 
   Loader2, Eye 
 } from "lucide-react";
-import { Patient, StaffDropdown } from "@/app/dashboard/patients/page";
+import { Patient, PatientFormData, StaffDropdown } from "@/app/dashboard/patients/page";
 
 interface PatientListProps {
   patients: Patient[];
@@ -16,8 +16,8 @@ interface PatientListProps {
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
   isSubmitting: boolean;
-  formData: any;
-  setFormData: (data: any) => void;
+  formData: PatientFormData;
+  setFormData: React.Dispatch<React.SetStateAction<PatientFormData>>;
   onSubmit: (e: React.FormEvent) => void;
   onSearch: (term: string) => void;
   onDelete: (id: string) => void;

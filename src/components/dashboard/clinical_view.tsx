@@ -24,7 +24,7 @@ const ClinicalView = () => {
       {/* Table: Use overflow-x-auto to prevent breakages */}
       <div className="bg-slate-900/50 border border-slate-800 rounded-[2rem] overflow-hidden">
         <div className="p-6 border-b border-slate-800">
-          <h3 className="font-bold text-white uppercase text-xs tracking-widest">Today's Schedule</h3>
+          <h3 className="font-bold text-white uppercase text-xs tracking-widest">Today&apos;s Schedule</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[600px]">

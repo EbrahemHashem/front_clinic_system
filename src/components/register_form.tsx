@@ -53,8 +53,8 @@ const RegisterForm: React.FC = () => {
       // FIX: Move to verify instead of login
       setTimeout(() => router.push('/verify'), 1500);
 
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Registration failed.");
     } finally {
       setIsLoading(false);
     }

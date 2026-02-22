@@ -11,12 +11,12 @@ export interface Service {
   clinic?: string;
 }
 
-const getIcon = (category: string | null) => {
+const renderIcon = (category: string | null) => {
   const cat = (category || "").toLowerCase();
-  if (cat.includes("surgery")) return Activity;
-  if (cat.includes("whitening") || cat.includes("cosmetic")) return Sparkles;
-  if (cat.includes("implant")) return ShieldCheck;
-  return Stethoscope; 
+  if (cat.includes("surgery")) return <Activity size={24} />;
+  if (cat.includes("whitening") || cat.includes("cosmetic")) return <Sparkles size={24} />;
+  if (cat.includes("implant")) return <ShieldCheck size={24} />;
+  return <Stethoscope size={24} />; 
 };
 
 interface ServiceCardProps {
@@ -26,14 +26,12 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({ service, onEdit, onDelete }: ServiceCardProps) {
-  const Icon = getIcon(service.category);
-
   return (
     <div className="group bg-slate-900/40 border border-slate-800 p-6 rounded-[2rem] hover:border-orange-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-900/10 flex flex-col justify-between h-full">
       <div>
         <div className="flex justify-between items-start mb-4">
           <div className="p-3 rounded-2xl bg-slate-800 text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors">
-            <Icon size={24} />
+            {renderIcon(service.category)}
           </div>
           <span className="text-white font-black text-lg">${service.price}</span>
         </div>

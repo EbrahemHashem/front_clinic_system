@@ -63,8 +63,8 @@ const ClinicForm = () => {
       // 4. Move to the next step
       router.push('/choose-plan');
 
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create clinic.");
     } finally {
       setIsLoading(false);
     }

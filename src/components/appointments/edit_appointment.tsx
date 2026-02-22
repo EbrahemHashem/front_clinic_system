@@ -111,7 +111,7 @@ export function EditAppointmentModal({ appointmentId, isOpen, onClose, onSuccess
 
     const formattedTime = `${formData.date} ${formData.time}:00`;
 
-    const payload: any = {
+    const payload: Record<string, string | null> = {
         appointment_id: appointmentId,
         time: formattedTime,
         status: formData.status,

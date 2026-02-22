@@ -32,8 +32,8 @@ const ForgotPasswordForm: React.FC = () => {
       }
 
       setIsSubmitted(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to send reset link.");
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +47,7 @@ const ForgotPasswordForm: React.FC = () => {
         </div>
         <h2 className="text-2xl font-black text-white mb-4">Check your email</h2>
         <p className="text-slate-400 mb-8">
-          We've sent a password reset link to <span className="text-white font-bold">{email}</span>.
+          We&apos;ve sent a password reset link to <span className="text-white font-bold">{email}</span>.
         </p>
         <button 
           onClick={() => router.push('/login')}
@@ -64,7 +64,7 @@ const ForgotPasswordForm: React.FC = () => {
       <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-10 rounded-[2.5rem] shadow-2xl">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Forgot Password?</h1>
-          <p className="text-slate-400 font-medium">No worries! Enter your email and we'll send you a reset link.</p>
+          <p className="text-slate-400 font-medium">No worries! Enter your email and we&apos;ll send you a reset link.</p>
         </div>
 
         {error && (

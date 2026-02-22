@@ -27,7 +27,7 @@ const VerifyForm = () => {
         }
         
         setEmail(user.email || '');
-      } catch (e) {
+      } catch {
         console.error("Error parsing user for verification");
       }
     } else {
@@ -69,8 +69,8 @@ const VerifyForm = () => {
       
       // Use replace instead of push so they can't click "back" to the form
       setTimeout(() => router.replace('/setup-clinic'), 1500);
-    } catch (err: any) {
-      setError(err.message || "Verification failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Verification failed");
     } finally {
       setIsLoading(false);
     }
@@ -88,8 +88,8 @@ const VerifyForm = () => {
       });
       if (!response.ok) throw new Error('Failed to resend code');
       setMessage("New code sent successfully!");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to resend code");
     } finally {
       setResending(false);
     }

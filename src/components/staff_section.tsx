@@ -6,14 +6,28 @@ import { API_CONFIG } from "@/lib/constants";
 
 interface StaffMember {
   id: string;          // Staff ID
-  user_id: string;     // User ID
+  user_id?: string;    // User ID
   first_name: string;
   last_name: string;
-  email: string;
+  email?: string;
   salary: number;
   percentage?: number;
-  phone_number: string;
+  phone_number?: string;
   specialty?: string;
+}
+
+interface StaffApiItem {
+  id: string;
+  salary?: number | string;
+  percentage?: number | string;
+  specialty?: string;
+  user?: {
+    id?: string;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone_number?: string;
+  };
 }
 
 const StaffSection = ({ type }: { type: "doctor" | "assistant" }) => {
@@ -47,7 +61,7 @@ const StaffSection = ({ type }: { type: "doctor" | "assistant" }) => {
       const data = await res.json();
 
       if (Array.isArray(data)) {
-        const flattenedStaff = data.map((item: any) => ({
+        const flattenedStaff = data.map((item: StaffApiItem) => ({
           id: item.id,
           user_id: item.user?.id,
           first_name: item.user?.first_name || "Unknown",
@@ -80,7 +94,7 @@ const StaffSection = ({ type }: { type: "doctor" | "assistant" }) => {
       const isEditMode = !!editingId;
 
       // Base Payload
-      const payload: any = {
+      const payload: Record<string, string | number | null> = {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
@@ -146,8 +160,8 @@ const StaffSection = ({ type }: { type: "doctor" | "assistant" }) => {
     setFormData({
       first_name: member.first_name,
       last_name: member.last_name,
-      email: member.email,
-      phone_number: member.phone_number,
+      email: member.email || "",
+      phone_number: member.phone_number || "",
       password: "", // Password remains blank for security
       salary: member.salary,
       percentage: member.percentage || 0.4,
@@ -195,7 +209,7 @@ const StaffSection = ({ type }: { type: "doctor" | "assistant" }) => {
             {type === "doctor" ? <Stethoscope className="text-orange-500" /> : <UserPlus className="text-orange-500" />}
             {type}s Management
           </h2>
-          <p className="text-slate-500 text-sm">View and manage your clinic's {type}s.</p>
+          <p className="text-slate-500 text-sm">View and manage your clinic&apos;s {type}s.</p>
         </div>
         <button 
           onClick={openCreateModal}
@@ -249,7 +263,7 @@ const StaffSection = ({ type }: { type: "doctor" | "assistant" }) => {
             </div>
           )) : (
             <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-800 rounded-[2rem]">
-              <p className="text-slate-500">No {type}s found. Click "Add {type}" to get started.</p>
+              <p className="text-slate-500">No {type}s found. Click &quot;Add {type}&quot; to get started.</p>
             </div>
           )}
         </div>
