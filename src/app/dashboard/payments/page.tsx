@@ -135,7 +135,7 @@ export default function PaymentsPage() {
     event.preventDefault();
     setSubmittingPlan(true);
     try {
-      const payload: Record<string, string | number> = {
+      const payload: Record<string, string | number | boolean> = {
         name: planForm.name,
         price_monthly: Number(planForm.price_monthly),
         price_yearly: Number(planForm.price_yearly),
