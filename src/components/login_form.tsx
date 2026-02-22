@@ -56,33 +56,43 @@ const LoginForm: React.FC = () => {
         throw new Error(data.message || data.error || "Login failed");
       }
 
+      const user = data.user || {};
+      const role = user.role;
+      const isSuperUser = Boolean(user.is_superuser ?? data.is_superuser);
+      const clinic = user.clinic ?? data.clinic ?? null;
+
+      const normalizedAuth = {
+        ...data,
+        user: {
+          ...user,
+          role: isSuperUser ? "superadmin" : role,
+        },
+      };
+
       // Save auth data
-      localStorage.setItem("dentflow_auth", JSON.stringify(data));
+      localStorage.setItem("dentflow_auth", JSON.stringify(normalizedAuth));
       setSuccess(true);
 
       setTimeout(() => {
-        const user = data.user || {};
-        const role = user.role;
-
         // Superadmin bypasses all clinic/plan/subscription checks
-        if (role === "superadmin") {
+        if (isSuperUser || role === "superadmin") {
           window.location.href = "/dashboard";
           return;
         }
 
-        if (role === "owner") {
-          const clinic = user.clinic || data.clinic;
-
-          if (!clinic) {
-            // No clinic created yet → setup clinic
-            window.location.href = "/setup-clinic";
-          } else {
-            // Let dashboard layout validate subscription from APIs.
-            window.location.href = "/dashboard";
-          }
-        } else {
-          window.location.href = "/dashboard";
+        if (!clinic) {
+          // Clinic is missing → setup clinic first
+          window.location.href = "/setup-clinic";
+          return;
         }
+
+        if (role === "owner" || role === "doctor" || role === "assistant") {
+          // Role-based dashboard view is rendered inside /dashboard
+          window.location.href = "/dashboard";
+          return;
+        }
+
+        window.location.href = "/dashboard";
       }, 1000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");

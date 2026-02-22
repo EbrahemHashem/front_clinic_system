@@ -3,28 +3,24 @@
 import ClinicalView from "@/components/dashboard/clinical_view";
 import OwnerView from "@/components/dashboard/owner_view";
 import SuperAdminView from "@/components/dashboard/super_admin_view";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 export default function DashboardPage() {
-  const [role, setRole] = useState<string | null>(null);
+  const [role] = useState<string | null>(() => {
+    try {
+      const data = localStorage.getItem("dentflow_auth");
+      if (!data) return null;
 
-  useEffect(() => {
-    // UPDATED: Read from 'dentflow_auth' to match your Layout logic
-    const data = localStorage.getItem("dentflow_auth");
-    if (data) {
-      try {
-        const parsed = JSON.parse(data);
-        // Access the user object inside the auth data
-        const userRole = parsed.user?.role;
-        
-        if (userRole) {
-          setRole(userRole);
-        }
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
+      const parsed = JSON.parse(data);
+      const isSuperUser = Boolean(
+        parsed.user?.is_superuser ?? parsed.is_superuser,
+      );
+      return isSuperUser ? "superadmin" : parsed.user?.role ?? null;
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+      return null;
     }
-  }, []);
+  });
 
   if (!role) {
     return (

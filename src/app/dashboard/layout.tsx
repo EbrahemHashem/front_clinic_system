@@ -17,6 +17,7 @@ export default function DashboardLayout({
     role: string;
     first_name?: string;
     last_name?: string;
+    is_superuser?: boolean;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
@@ -91,10 +92,17 @@ export default function DashboardLayout({
           return;
         }
 
-        setUser(parsed.user);
+        const isSuperUser = Boolean(
+          parsed.user?.is_superuser ?? parsed.is_superuser,
+        );
+
+        setUser({
+          ...parsed.user,
+          role: isSuperUser ? "superadmin" : parsed.user.role,
+        });
 
         // Superadmins bypass subscription check
-        if (parsed.user.role === "superadmin") {
+        if (isSuperUser || parsed.user.role === "superadmin") {
           setLoading(false);
           return;
         }

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Link from 'next/link';
 
 const Footer: React.FC = () => {
   return (
@@ -21,8 +22,8 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold mb-6 text-white">Product</h4>
             <ul className="space-y-4 text-sm text-slate-400">
-              <li><a href="/#features" className="hover:text-orange-500 transition-colors">Features</a></li>
-              <li><a href="/#pricing" className="hover:text-orange-500 transition-colors">Pricing</a></li>
+              <li><Link href="/#features" className="hover:text-orange-500 transition-colors">Features</Link></li>
+              <li><Link href="/#pricing" className="hover:text-orange-500 transition-colors">Pricing</Link></li>
               {/* <li><a href="#" className="hover:text-orange-500 transition-colors">Enterprise</a></li> */}
             </ul>
           </div>
@@ -30,7 +31,7 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold mb-6 text-white">Company</h4>
             <ul className="space-y-4 text-sm text-slate-400">
-              <li><a href="/#faq" className="hover:text-orange-500 transition-colors">About Us</a></li>
+              <li><Link href="/#faq" className="hover:text-orange-500 transition-colors">About Us</Link></li>
               <li><a href="#" className="hover:text-orange-500 transition-colors">Legal</a></li>
               <li><a href="#" className="hover:text-orange-500 transition-colors">Contact</a></li>
             </ul>
